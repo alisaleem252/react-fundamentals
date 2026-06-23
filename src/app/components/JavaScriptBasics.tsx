@@ -21,7 +21,7 @@ export function JavaScriptBasics() {
 
     // VAR - Function scoped
     if (true) {
-      var varVariable = "I'm var - accessible outside this block";
+      var varVariable = "I'm var - accessible outside this block, Branch of Ali";
     }
     results.push(`var outside block: ${varVariable}`);
 
