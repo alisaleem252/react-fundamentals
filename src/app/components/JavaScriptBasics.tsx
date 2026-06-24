@@ -35,7 +35,7 @@ export function JavaScriptBasics() {
 
     setOutput(results);
   };
-
+alert("letVariable is not accessible here — it's block-scoped!");
   // Demo 2: Reassignment
   const demonstrateReassignment = () => {
     const results: string[] = [];
