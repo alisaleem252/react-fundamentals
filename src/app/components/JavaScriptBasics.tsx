@@ -12,11 +12,14 @@ import { useState } from 'react';
  * - const: Block-scoped, cannot be redeclared, cannot be updated, not hoisted
  */
 
-export function JavaScriptBasics() {
+export function JavaScriptBasics() {        
+  
   const [output, setOutput] = useState<string[]>([]);
 
   // Demo 1: Scope differences
   const demonstrateScope = () => {
+    let abc = 10;
+    alert();
     const results: string[] = [];
 
     // VAR - Function scoped
