@@ -20,6 +20,7 @@ export function JavaScriptBasics() {
     const results: string[] = [];
 
     // VAR - Function scoped
+    
     if (true) {
       var varVariable = "I'm var - accessible outside this block";
     }
@@ -35,7 +36,7 @@ export function JavaScriptBasics() {
 
     setOutput(results);
   };
-alert("letVariable is not accessible here — it's block-scoped!");
+
   // Demo 2: Reassignment
   const demonstrateReassignment = () => {
     const results: string[] = [];
@@ -76,7 +77,7 @@ alert("letVariable is not accessible here — it's block-scoped!");
     const results: string[] = [];
 
     // VAR is hoisted (declared at the top of function, but undefined until assigned)
-    results.push(`var before declaration: ${typeof varHoisted}`); // undefined
+    results.push(`var before declaration: undefined`); // undefined
     var varHoisted = 'I am hoisted';
     results.push(`var after declaration: ${varHoisted}`);
 
@@ -87,7 +88,48 @@ alert("letVariable is not accessible here — it's block-scoped!");
     results.push(`let after declaration: ${letNotHoisted}`);
 
     setOutput(results);
-  };
+  }; ///exercise 1: Bonus Demo: Loop behavior with var vs let
+const demonstrateSetTimeout = () => {
+  const results: string[] = [];
+
+  for (var i = 0; i < 3; i++) {
+    setTimeout(() => {
+      results.push(`var: ${i}`);
+      setOutput([...results]);
+    }, 100);
+  }
+
+  for (let j = 0; j < 3; j++) {
+    setTimeout(() => {
+      results.push(`let: ${j}`);
+      setOutput([...results]);
+    }, 100);
+  }
+};//There is only one i.The loop finishes first:i = 3..Then all setTimeouts run and see:3
+//EXERCISE 2: Bonus Demo: const array behavior
+const demonstrateArray = () => {
+  const results = [];
+
+  const fruits = ["Apple", "Banana"];
+  results.push(`Initial: ${fruits.join(", ")}`);
+
+  fruits.push("Mango");
+  results.push(`After push: ${fruits.join(", ")}`);
+
+  fruits.pop();
+  results.push(`After pop: ${fruits.join(", ")}`);
+
+  setOutput(results);
+};/// EXERCISE 3: Bonus Demo: Redeclaration error messages
+const demonstrateRedeclaration = () => {
+  const results = [];
+
+  results.push("let cannot be redeclared");
+  results.push("const cannot be redeclared");
+  results.push("var can be redeclared");
+
+  setOutput(results);
+};
 
   return (
     <div className="space-y-6">
@@ -139,6 +181,40 @@ alert("letVariable is not accessible here — it's block-scoped!");
           </button>
         </div>
       </div>
+      {/*button to demonstrate loop behavior with var vs let*/}
+  <div className="border rounded-lg p-4">
+  <h3 className="font-semibold mb-2">4. Loop Demo</h3>
+
+  <button
+    onClick={demonstrateSetTimeout}
+    className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+  >
+    Run Loop Demo
+  </button>
+</div>
+{/*button to demonstrate const array behavior*/}
+<div className="border rounded-lg p-4">
+  <h3 className="font-semibold mb-2">5. Const Array Demo</h3>
+
+  <button
+    onClick={demonstrateArray}
+    className="px-4 py-2 bg-orange-500 text-white rounded hover:bg-orange-600"
+  >
+    Run Array Demo
+  </button>
+{/*button to demonstrate redeclaration error messages*/}
+
+</div><div className="border rounded-lg p-4">
+  <h3 className="font-semibold mb-2">6. Redeclaration Demo</h3>
+
+  <button
+    onClick={demonstrateRedeclaration}
+    className="px-4 py-2 bg-pink-500 text-white rounded hover:bg-pink-600"
+  >
+    Run Redeclaration Demo
+  </button>
+</div>
+
 
       {/* Output Display */}
       {output.length > 0 && (
