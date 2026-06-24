@@ -11,7 +11,8 @@ import { useState } from 'react';
  * - let: Block-scoped, cannot be redeclared, can be updated, not hoisted
  * - const: Block-scoped, cannot be redeclared, cannot be updated, not hoisted
  */
-
+alert(abc);
+var abc = 10;
 export function JavaScriptBasics() {
   const [output, setOutput] = useState<string[]>([]);
 
@@ -89,6 +90,33 @@ export function JavaScriptBasics() {
     setOutput(results);
   };
 
+  // Demo 4: Loop behavior with var vs let
+  const demonstrateLoopVarLet = () => {
+    const results: string[] = [];
+
+    results.push('--- var in a loop ---');
+    var funcsWithVar: (() => string)[] = [];
+    for (var i = 0; i < 3; i++) {
+      funcsWithVar.push(() => `var i = ${i}`);
+    }
+    // All callbacks reference the same `i` which is now 3
+    funcsWithVar.forEach((fn) => results.push(fn()));
+
+    results.push('--- let in a loop ---');
+    const funcsWithLet: (() => string)[] = [];
+    for (let j = 0; j < 3; j++) {
+      funcsWithLet.push(() => `let j = ${j}`);
+    }
+    // Each callback captures its own `j` value (0, 1, 2)
+    funcsWithLet.forEach((fn) => results.push(fn()));
+
+    results.push('');
+    results.push('var: all closures share the same hoisted variable');
+    results.push('let: each iteration gets its own binding');
+
+    setOutput(results);
+  };
+
   return (
     <div className="space-y-6">
       <div>
@@ -138,6 +166,19 @@ export function JavaScriptBasics() {
             Run Hoisting Demo
           </button>
         </div>
+
+        <div className="border rounded-lg p-4">
+          <h3 className="font-semibold mb-2">4. Loop Behavior: var vs let</h3>
+          <p className="text-sm text-gray-600 mb-3">
+            In a loop, <code>var</code> shares one variable across all iterations, while <code>let</code> creates a new binding each time.
+          </p>
+          <button
+            onClick={demonstrateLoopVarLet}
+            className="px-4 py-2 bg-orange-500 text-white rounded hover:bg-orange-600"
+          >
+            Run Loop Demo
+          </button>
+        </div>
       </div>
 
       {/* Output Display */}
@@ -168,7 +209,6 @@ export function JavaScriptBasics() {
           Try modifying the code above to:
         </p>
         <ol className="list-decimal list-inside space-y-1 text-sm">
-          <li>Add a demo showing loop behavior with var vs let</li>
           <li>Create a const array and demonstrate adding/removing items</li>
           <li>Show the difference in error messages when trying to redeclare variables</li>
         </ol>
