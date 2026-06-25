@@ -125,32 +125,38 @@ export function JavaScriptBasics() {
   const demonstrateLoop = () => {
     // ☝️ Yeh function loop mein var aur let ke farq ko dikhayega.
     const results: string[] = [];
+    // ☝️ Ek temporary array hai jismein hum output strings store karenge.
 
     // VAR in loop — ek hi variable har iteration mein reuse hota hai
     const varFuncs: (() => string)[] = [];
-    // ☝️ Array jo functions store karega
+    // ☝️ varFuncs naam ka array hai jo functions store karega — har function ek string return karega
     for (var i = 0; i < 3; i++) {
+      // ☝️ var i use kiya — i ek hi variable hai, har iteration mein update hota rehta hai
       varFuncs.push(() => `var[${i}]`);
-      // ☝️ Har iteration mein wahi 'i' capture ho raha hai (same variable)
+      // ☝️ Har iteration mein ek function push kar rahe hain jo current i capture karta hai
+      // Lekin var ki wajah se sab functions same i ko refer karenge
     }
     results.push(`var loop: ${varFuncs[0]()}, ${varFuncs[1]()}, ${varFuncs[2]()}`);
-    // ☝️ Sab "var[3]" print hoga kyunke var function-scoped hai — i ki final value 3 hai
+    // ☝️ Sab "var[3]" print hoga kyunke var function-scoped hai — loop khatam hone par i ki final value 3 hai
 
     // LET in loop — har iteration ka apna naya variable
     const letFuncs: (() => string)[] = [];
+    // ☝️ letFuncs array bhi functions store karega
     for (let j = 0; j < 3; j++) {
+      // ☝️ let j use kiya — har iteration ka apna naya j variable banega (block-scoped)
       letFuncs.push(() => `let[${j}]`);
-      // ☝️ Har iteration mein naya 'j' block scope mein capture hota hai
+      // ☝️ Har iteration mein naya 'j' block scope mein capture hota hai — alag alag values
     }
     results.push(`let loop: ${letFuncs[0]()}, ${letFuncs[1]()}, ${letFuncs[2]()}`);
-    // ☝️ "let[0], let[1], let[2]" print hoga — har iteration ka apna scope
+    // ☝️ "let[0], let[1], let[2]" print hoga — kyunke har iteration ka apna scope tha
 
     // VAR loop ke baad bhi accessible hai, LET nahi
     results.push(`var i loop ke bahar bhi accessible: ${i}`);
-    // ☝️ i = 3 — var scope se bahar nahi jaata, value update hoti rehti hai
+    // ☝️ i = 3 — var function-scoped hai, loop khatam hone ke baad bhi i accessible hai aur uski value 3 hai
     // let j loop ke bahar accessible nahi — error aayega agar access karein
 
     setOutput(results);
+    // ☝️ Saare results React state mein set kar rahe hain, UI automatically update ho jayega
   };
 
   // ----------------------------------------------------------------
@@ -159,48 +165,59 @@ export function JavaScriptBasics() {
   const demonstrateConstArray = () => {
     // ☝️ Yeh function dikhayega ke const array mein items add/remove kaise karte hain
     const results: string[] = [];
+    // ☝️ results array hai jo saara output collect karega
 
     // const array banaya — yeh variable dobara assign nahi ho sakta
     const fruits: string[] = ['🍎 Apple', '🍌 Banana'];
+    // ☝️ const se fruits array banaya. Isay hum dobara assign nahi kar sakte (jaise fruits = [...] nahi kar sakte)
     results.push(`Initial array: ${JSON.stringify(fruits)}`);
-    // ☝️ Shuruat mein do fruits hain
+    // ☝️ Shuruat mein do fruits hain — Apple aur Banana. JSON.stringify se array ko string mein convert kiya
 
     // ADD — push() se items add karte hain
     fruits.push('🍊 Orange');
+    // ☝️ push() method array ke end mein naya item add karta hai. Ab array: [Apple, Banana, Orange]
     results.push(`After push('Orange'): ${JSON.stringify(fruits)}`);
     // ☝️ Array ke end mein Orange add ho gaya
 
     fruits.push('🍇 Grape', '🍉 Melon');
+    // ☝️ push() ek saath multiple items bhi add kar sakta hai
     results.push(`After push(Grape, Melon): ${JSON.stringify(fruits)}`);
-    // ☝️ Ek saath do items add kiye
+    // ☝️ Ek saath do items add kiye — Grape aur Melon
 
     // REMOVE — pop() se aakhri item remove karte hain
     const last = fruits.pop();
+    // ☝️ pop() array ke aakhri item ko hata deta hai aur use return karta hai
     results.push(`pop() returned: ${last}`);
+    // ☝️ pop() ne "Melon" return kiya kyunke woh aakhri tha
     results.push(`After pop(): ${JSON.stringify(fruits)}`);
-    // ☝️ pop() aakhri item (Melon) hata kar return karta hai
+    // ☝️ pop() ke baad array mein Melon nahi raha
 
     // REMOVE — shift() se pehla item remove karte hain
     const first = fruits.shift();
+    // ☝️ shift() array ke pehle item ko hata deta hai aur use return karta hai
     results.push(`shift() returned: ${first}`);
+    // ☝️ shift() ne "Apple" return kiya kyunke woh pehla tha
     results.push(`After shift(): ${JSON.stringify(fruits)}`);
-    // ☝️ shift() pehla item (Apple) hata kar return karta hai
+    // ☝️ shift() ke baad array mein Apple nahi raha
 
     // MODIFY by index — index se value change kar sakte hain
     fruits[1] = '🥝 Kiwi';
+    // ☝️ Array ke index 1 (doosra item — Banana) ko replace kar ke Kiwi kar diya
     results.push(`After fruits[1] = 'Kiwi': ${JSON.stringify(fruits)}`);
     // ☝️ Index 1 (Banana) ko Kiwi se replace kar diya
 
     // LENGTH property
     results.push(`Array length: ${fruits.length}`);
-    // ☝️ Array ki current length batata hai
+    // ☝️ Array ki current length batata hai — kitne items hain array mein
 
     // --- const array ko dobara assign nahi kar sakte ---
     // Neeche wali line error degi agar uncomment karein:
     // fruits = ['🍓 Strawberry']; // Error! const variable reassign nahi ho sakta
     results.push(`✅ const array modify ho sakta hai, par reassign nahi!`);
+    // ☝️ const sirf variable reassignment rokta hai. push, pop, shift, index change — sab allowed hain!
 
     setOutput(results);
+    // ☝️ Saara output React state mein daal rahe hain, UI automatically render hoga
   };
 
   // ----------------------------------------------------------------
@@ -209,18 +226,24 @@ export function JavaScriptBasics() {
   const demonstrateErrors = () => {
     // ☝️ Yeh function dikhayega ke redeclare karne par kon si error aati hai
     const results: string[] = [];
+    // ☝️ results array jo saari output strings store karega
 
     // --- VAR redeclare ---
     var x = 1;
+    // ☝️ var se x = 1 declare kiya
     var x = 2; // ✅ var ko dobara declare kar sakte hain — koi error nahi
+    // ☝️ Dobara var x = 2 — yeh kaam karta hai, koi error nahi aati. x ki value ab 2 hai
     results.push(`✅ var redeclare: ${x} (koi error nahi)`);
-    // ☝️ var ke saath redeclaration completely allowed hai
+    // ☝️ var ke saath redeclaration completely allowed hai — error nahi aati
 
     // --- LET redeclare (try-catch + eval se error catch karenge) ---
     try {
+      // ☝️ try block — agar error aayi to catch mein chali jayegi
       eval('let a = 1; let a = 2;');
       // ☝️ eval() runtime mein code execute karta hai, is liye error catch ho sakti hai
+      // Nahi to normally SyntaxError compile-time aati hai aur catch nahi ho sakti
     } catch (e: any) {
+      // ☝️ catch block — error yahan aati hai agar try mein koi exception throw hui
       results.push(`❌ let redeclare: ${e.message}`);
       // ☝️ SyntaxError aayegi: "Cannot redeclare block-scoped variable 'a'"
     }
@@ -228,38 +251,47 @@ export function JavaScriptBasics() {
     // --- CONST redeclare ---
     try {
       eval('const b = 1; const b = 2;');
+      // ☝️ const b ko dobara declare karne ki koshish
     } catch (e: any) {
       results.push(`❌ const redeclare: ${e.message}`);
-      // ☝️ Same error: "Cannot redeclare block-scoped variable 'b'"
+      // ☝️ Same error: "Cannot redeclare block-scoped variable 'b'" — let aur const dono same error dete hain
     }
 
     // --- var ke baad let (same name) ---
     try {
       eval('var c = 1; let c = 2;');
+      // ☝️ Pehle var se c declare kiya, phir let se same name c dobara declare karne ki koshish
     } catch (e: any) {
       results.push(`❌ var phir let (same name): ${e.message}`);
-      // ☝️ Identifier 'c' already declared
+      // ☝️ Error aayegi: "Identifier 'c' has already been declared"
     }
 
     // --- let ke baad const (same name) ---
     try {
       eval('let d = 1; const d = 2;');
+      // ☝️ Pehle let se d, phir const se same d dobara
     } catch (e: any) {
       results.push(`❌ let phir const (same name): ${e.message}`);
+      // ☝️ Error: identifier already declared
     }
 
     // --- const ke baad let (same name) ---
     try {
       eval('const e = 1; let e = 2;');
+      // ☝️ Pehle const se e, phir let se same e dobara
     } catch (e: any) {
       results.push(`❌ const phir let (same name): ${e.message}`);
+      // ☝️ Error: identifier already declared
     }
 
     results.push(`---`);
+    // ☝️ Ek separator line daal di
     results.push(`💡 Rule: var ko chhod kar, let aur const ek baar declare karne ke baad`);
     results.push(`   same scope mein dobara declare nahi kar sakte.`);
+    // ☝️ Rule summary: Sirf var redeclare ho sakta hai, let aur const nahi
 
     setOutput(results);
+    // ☝️ Saara output React state mein set kar rahe hain, UI update ho jayega
   };
 
   // ----------------------------------------------------------------
