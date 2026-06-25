@@ -41,19 +41,19 @@ export function JavaScriptBasics() {
     const results: string[] = [];
 
     // VAR - Can be redeclared and updated
-    var varNum = 10;
+    var varNum = 1;
     results.push(`var initial: ${varNum}`);
-    varNum = 20; // Works
+    varNum = 2; // Works
     results.push(`var updated: ${varNum}`);
-    var varNum = 30; // Redeclaration works (not recommended!)
+    var varNum = 3; // Redeclaration works (not recommended!)
     results.push(`var redeclared: ${varNum}`);
 
     // LET - Can be updated but not redeclared
-    let letNum = 10;
+    let letNum = 5;
     results.push(`let initial: ${letNum}`);
-    letNum = 20; // Works
+    letNum = 10; // Works
     results.push(`let updated: ${letNum}`);
-    // let letNum = 30; // Would cause error!
+    // let letNum = 15; // Would cause error!
 
     // CONST - Cannot be updated or redeclared
     const constNum = 10;
