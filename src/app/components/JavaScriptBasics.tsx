@@ -3,9 +3,6 @@ import { useState } from 'react';
 /**
  * JAVASCRIPT BASICS: VAR, CONST, LET
  *
- * This component demonstrates the key differences between var, const, and let in JavaScript.
- * Understanding these is crucial before diving into React.
- *
  * KEY DIFFERENCES:
  * - var: Function-scoped, can be redeclared, can be updated, hoisted
  * - let: Block-scoped, cannot be redeclared, can be updated, not hoisted
@@ -13,25 +10,25 @@ import { useState } from 'react';
  */
 
 export function JavaScriptBasics() {
+
   const [output, setOutput] = useState<string[]>([]);
 
   // Demo 1: Scope differences
   const demonstrateScope = () => {
+    let num =5;
+    alert(num);
     const results: string[] = [];
 
-    // VAR - Function scoped
     if (true) {
-      var varVariable = "I'm var - accessible outside this block, Branch of Ali";
+      var varVariable = "I'm var - accessible outside this block";
     }
     results.push(`var outside block: ${varVariable}`);
 
-    // LET - Block scoped
     if (true) {
       let letVariable = "I'm let - only inside this block";
       results.push(`let inside block: ${letVariable}`);
     }
-    // Uncommenting below would cause an error:
-    // results.push(`let outside block: ${letVariable}`); // Error!
+    results.push(`let outside block: ❌ ReferenceError (block-scoped, not accessible here)`);
 
     setOutput(results);
   };
@@ -40,33 +37,25 @@ export function JavaScriptBasics() {
   const demonstrateReassignment = () => {
     const results: string[] = [];
 
-    // VAR - Can be redeclared and updated
     var varNum = 10;
     results.push(`var initial: ${varNum}`);
-    varNum = 20; // Works
+    varNum = 20;
     results.push(`var updated: ${varNum}`);
-    var varNum = 30; // Redeclaration works (not recommended!)
+    var varNum = 30;
     results.push(`var redeclared: ${varNum}`);
 
-    // LET - Can be updated but not redeclared
     let letNum = 10;
     results.push(`let initial: ${letNum}`);
-    letNum = 20; // Works
+    letNum = 20;
     results.push(`let updated: ${letNum}`);
-    // let letNum = 30; // Would cause error!
 
-    // CONST - Cannot be updated or redeclared
     const constNum = 10;
     results.push(`const value: ${constNum}`);
-    // constNum = 20; // Would cause error!
-    // const constNum = 30; // Would cause error!
 
-    // IMPORTANT: const with objects/arrays
     const person = { name: 'John', age: 25 };
     results.push(`const object initial: ${JSON.stringify(person)}`);
-    person.age = 26; // We can modify properties!
+    person.age = 26;
     results.push(`const object modified: ${JSON.stringify(person)}`);
-    // person = {}; // But we can't reassign the variable itself
 
     setOutput(results);
   };
@@ -75,16 +64,83 @@ export function JavaScriptBasics() {
   const demonstrateHoisting = () => {
     const results: string[] = [];
 
-    // VAR is hoisted (declared at the top of function, but undefined until assigned)
-    results.push(`var before declaration: ${typeof varHoisted}`); // undefined
+    results.push(`var before declaration: ${typeof varHoisted}`);
     var varHoisted = 'I am hoisted';
     results.push(`var after declaration: ${varHoisted}`);
 
-    // LET and CONST are not hoisted (temporal dead zone)
-    // Uncommenting would cause error:
-    // results.push(`let before declaration: ${letNotHoisted}`); // Error!
+    results.push(`let before declaration: ❌ ReferenceError - Temporal Dead Zone`);
     let letNotHoisted = 'I am not hoisted';
     results.push(`let after declaration: ${letNotHoisted}`);
+
+    setOutput(results);
+  };
+
+  // Exercise 1: Loop Behavior (var vs let)
+  const demonstrateLoopBehavior = () => {
+    const results: string[] = [];
+
+    results.push('--- VAR in loop (all share same i) ---');
+    for (var i = 0; i < 3; i++) {
+      setTimeout(() => {
+        results.push(`var: ${i}`);
+      }, 100);
+    }
+
+    results.push('--- LET in loop (each iteration has own j) ---');
+    for (let j = 0; j < 3; j++) {
+      setTimeout(() => {
+        results.push(`let: ${j}`);
+      }, 100);
+    }
+
+    setTimeout(() => {
+      setOutput([...results]);
+    }, 200);
+  };
+
+  // Exercise 2: Const Array — adding/removing items
+  const demonstrateConstArray = () => {
+    const results: string[] = [];
+
+    const fruits = ['apple', 'banana', 'mango'];
+    results.push(`const array initial: [${fruits}]`);
+
+    fruits.push('orange');
+    results.push(`after push('orange'): [${fruits}]`);
+
+    fruits.pop();
+    results.push(`after pop(): [${fruits}]`);
+
+    fruits.splice(1, 1);
+    results.push(`after splice(1,1) remove 'banana': [${fruits}]`);
+
+    results.push(`fruits = [] → ❌ TypeError: Assignment to constant variable`);
+    results.push(` const array ki contents change ho sakti hain, variable nahi!`);
+
+    setOutput(results);
+  };
+
+  // Exercise 3: Error messages when redeclaring variables
+  const demonstrateRedeclareErrors = () => {
+    const results: string[] = [];
+
+    var x = 10;
+    var x = 20;
+    results.push(`var redeclare: No error — var x = 10 then var x = 20 → x = ${x}`);
+
+    let y = 10;
+    // let y = 20; // ❌ SyntaxError
+    results.push(`let redeclare: ❌ SyntaxError: Identifier 'y' has already been declared`);
+    results.push(`  (let y = ${y} already exists — cannot declare again)`);
+
+    const z = 10;
+    // const z = 20; // ❌ SyntaxError
+    results.push(`const redeclare: ❌ SyntaxError: Identifier 'z' has already been declared`);
+    results.push(`  (const z = ${z} already exists — cannot declare again)`);
+
+    // z = 20; // ❌ TypeError
+    results.push(`const reassign: ❌ TypeError: Assignment to constant variable`);
+    results.push(`  (z = 20 not allowed — const cannot be updated)`);
 
     setOutput(results);
   };
@@ -98,8 +154,9 @@ export function JavaScriptBasics() {
         </p>
       </div>
 
-      {/* Interactive Demos */}
       <div className="grid gap-4">
+
+        {/* Demo 1 */}
         <div className="border rounded-lg p-4">
           <h3 className="font-semibold mb-2">1. Scope Demonstration</h3>
           <p className="text-sm text-gray-600 mb-3">
@@ -113,6 +170,7 @@ export function JavaScriptBasics() {
           </button>
         </div>
 
+        {/* Demo 2 */}
         <div className="border rounded-lg p-4">
           <h3 className="font-semibold mb-2">2. Reassignment & Redeclaration</h3>
           <p className="text-sm text-gray-600 mb-3">
@@ -126,6 +184,7 @@ export function JavaScriptBasics() {
           </button>
         </div>
 
+        {/* Demo 3 */}
         <div className="border rounded-lg p-4">
           <h3 className="font-semibold mb-2">3. Hoisting Behavior</h3>
           <p className="text-sm text-gray-600 mb-3">
@@ -138,6 +197,60 @@ export function JavaScriptBasics() {
             Run Hoisting Demo
           </button>
         </div>
+
+        {/* Exercise 1 — Loop Behavior */}
+        <div className="border rounded-lg p-4 border-orange-300 bg-orange-50">
+          <h3 className="font-semibold mb-2">
+            4. Loop Behavior (var vs let)
+            
+          </h3>
+          <p className="text-sm text-gray-600 mb-3">
+            <strong>var</strong> loop mein sab iterations ek hi variable share karte hain.
+            <strong> let</strong> har iteration ko apna alag binding deta hai.
+          </p>
+          <button
+            onClick={demonstrateLoopBehavior}
+            className="px-4 py-2 bg-orange-500 text-white rounded hover:bg-orange-600"
+          >
+            Run Loop Demo
+          </button>
+        </div>
+
+        {/* Exercise 2 — Const Array */}
+        <div className="border rounded-lg p-4 border-teal-300 bg-teal-50">
+          <h3 className="font-semibold mb-2">
+            5. Const Array — Add / Remove Items
+            
+          </h3>
+          <p className="text-sm text-gray-600 mb-3">
+            <strong>const</strong> array ki contents change ho sakti hain (push, pop, splice) — lekin array ko dobara assign nahi kar sakte.
+          </p>
+          <button
+            onClick={demonstrateConstArray}
+            className="px-4 py-2 bg-teal-500 text-white rounded hover:bg-teal-600"
+          >
+            Run Const Array Demo
+          </button>
+        </div>
+
+        {/* Exercise 3 — Redeclare Errors */}
+        <div className="border rounded-lg p-4 border-red-300 bg-red-50">
+          <h3 className="font-semibold mb-2">
+            6. Redeclaration Error Messages
+            
+          </h3>
+          <p className="text-sm text-gray-600 mb-3">
+            <strong>var</strong> redeclare ho sakta hai bina error ke.
+            <strong> let</strong> aur <strong>const</strong> redeclare karne par SyntaxError aata hai.
+          </p>
+          <button
+            onClick={demonstrateRedeclareErrors}
+            className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+          >
+            Run Error Messages Demo
+          </button>
+        </div>
+
       </div>
 
       {/* Output Display */}
@@ -160,8 +273,7 @@ export function JavaScriptBasics() {
           <li>Objects and arrays can use const (you can modify contents, just not reassign)</li>
         </ul>
       </div>
-
-      {/* Exercise for students */}
+{/* Exercise for students */}
       <div className="bg-blue-50 border-l-4 border-blue-400 p-4">
         <h3 className="font-bold mb-2">🎯 Exercise for You</h3>
         <p className="text-sm mb-2">
