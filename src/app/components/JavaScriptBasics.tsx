@@ -79,53 +79,45 @@ export function JavaScriptBasics() {
   const demonstrateLoopBehavior = () => {
     const results: string[] = [];
 
-    var xyz = 10; 
+    results.push('Think of a loop like repeating a small task 3 times.');
+    results.push('');
 
-    results.push(`xyz before loop: ${xyz}`);
-   xyz = 20;
-
-results.push(`xyz before loop: ${xyz}`);
- xyz = 30; 
-
-results.push(`xyz before loop: ${xyz}`);
- 
-    results.push('--- VAR in loop (all share same i) ---');
+    results.push('--- with var ---');
     for (var i = 0; i < 3; i++) {
-      setTimeout(() => {
-        results.push(`var: ${i}`);
-      }, 100);
+      results.push(`loop step ${i}: var gives us ${i}`);
     }
+    results.push(`After the loop, i = ${i}`);
+    results.push('This happens because var keeps one shared value.');
+    results.push('');
 
-    results.push('--- LET in loop (each iteration has own j) ---');
+    results.push('--- with let ---');
     for (let j = 0; j < 3; j++) {
-      setTimeout(() => {
-        results.push(`let: ${j}`);
-      }, 100);
+      results.push(`loop step ${j}: let gives us ${j}`);
     }
+    results.push('Each loop step keeps its own value with let.');
 
-    setTimeout(() => {
-      setOutput([...results]);
-    }, 200);
+    setOutput(results);
   };
 
   // Exercise 2: Const Array — adding/removing items
   const demonstrateConstArray = () => {
     const results: string[] = [];
 
-    const fruits = ['apple', 'banana', 'mango'];
-    results.push(`const array initial: [${fruits}]`);
+    // const means the array variable name cannot be changed.
+    const fruits = ['apple', 'banana'];
+    results.push('Start with a const array: apple, banana');
 
-    fruits.push('orange');
-    results.push(`after push('orange'): [${fruits}]`);
+    // We can still change the contents of the array.
+    fruits.push('mango');
+    results.push(`After adding mango: ${fruits.join(', ')}`);
 
+    // We can remove the last item too.
     fruits.pop();
-    results.push(`after pop(): [${fruits}]`);
+    results.push(`After removing the last item: ${fruits.join(', ')}`);
 
-    fruits.splice(1, 1);
-    results.push(`after splice(1,1) remove 'banana': [${fruits}]`);
-
-    results.push(`fruits = [] → ❌ TypeError: Assignment to constant variable`);
-    results.push(` const array ki contents change ho sakti hain, variable nahi!`);
+    // The array changed, but the variable name stays the same.
+    results.push('This is why const works for arrays: we can change the items inside the array.');
+    results.push('But if we try to do fruits = [] we would get an error.');
 
     setOutput(results);
   };
@@ -134,23 +126,28 @@ results.push(`xyz before loop: ${xyz}`);
   const demonstrateRedeclareErrors = () => {
     const results: string[] = [];
 
+    results.push('Try to declare the same name again.');
+    results.push('');
+
+    // var allows redeclaration.
     var x = 10;
     var x = 20;
-    results.push(`var redeclare: No error — var x = 10 then var x = 20 → x = ${x}`);
+    results.push(`var: no problem — the second declaration works and x becomes ${x}`);
+    results.push('');
 
+    // let does not allow redeclaration in the same scope.
     let y = 10;
-    // let y = 20; // ❌ SyntaxError
-    results.push(`let redeclare: ❌ SyntaxError: Identifier 'y' has already been declared`);
-    results.push(`  (let y = ${y} already exists — cannot declare again)`);
+    results.push("let: if you write 'let y = 20' again, JavaScript shows a SyntaxError.");
+    results.push("Reason: 'y' was already declared.");
+    results.push('');
 
+    // const also does not allow redeclaration.
     const z = 10;
-    // const z = 20; // ❌ SyntaxError
-    results.push(`const redeclare: ❌ SyntaxError: Identifier 'z' has already been declared`);
-    results.push(`  (const z = ${z} already exists — cannot declare again)`);
+    results.push("const: if you write 'const z = 20' again, JavaScript shows a SyntaxError.");
+    results.push("Reason: 'z' was already declared.");
+    results.push('');
 
-    // z = 20; // ❌ TypeError
-    results.push(`const reassign: ❌ TypeError: Assignment to constant variable`);
-    results.push(`  (z = 20 not allowed — const cannot be updated)`);
+    results.push('Important: const also blocks reassignment, so z = 20 would cause a TypeError.');
 
     setOutput(results);
   };
