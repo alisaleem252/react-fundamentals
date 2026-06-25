@@ -76,71 +76,106 @@ export function JavaScriptBasics() {
   };
 
   // Exercise 1: Loop Behavior (var vs let)
+  // Easy: bas loop ke andar values dekhte hain
   const demonstrateLoopBehavior = () => {
     const results: string[] = [];
 
-    results.push('--- VAR in loop (all share same i) ---');
+    // --- VAR ---
+    results.push('--- VAR in loop ---');
+    // var: poori function mein accessible hota hai
     for (var i = 0; i < 3; i++) {
-      setTimeout(() => {
-        results.push(`var: ${i}`);
-      }, 100);
+      results.push(`  var i = ${i}`);
     }
+    // var loop ke bahar bhi zinda hai!
+    results.push(`  🔸 Loop ke bahar bhi: var i = ${i}`);
 
-    results.push('--- LET in loop (each iteration has own j) ---');
+    results.push('');
+
+    // --- LET ---
+    results.push('--- LET in loop ---');
+    // let: sirf { block } ke andar rehta hai
     for (let j = 0; j < 3; j++) {
-      setTimeout(() => {
-        results.push(`let: ${j}`);
-      }, 100);
+      results.push(`  let j = ${j}`);
     }
+    // let yahan exist nahi karta!
+    results.push('  🔸 Loop ke bahar: let j not found ❌');
 
-    setTimeout(() => {
-      setOutput([...results]);
-    }, 200);
-  };
-
-  // Exercise 2: Const Array — adding/removing items
-  const demonstrateConstArray = () => {
-    const results: string[] = [];
-
-    const fruits = ['apple', 'banana', 'mango'];
-    results.push(`const array initial: [${fruits}]`);
-
-    fruits.push('orange');
-    results.push(`after push('orange'): [${fruits}]`);
-
-    fruits.pop();
-    results.push(`after pop(): [${fruits}]`);
-
-    fruits.splice(1, 1);
-    results.push(`after splice(1,1) remove 'banana': [${fruits}]`);
-
-    results.push(`fruits = [] → ❌ TypeError: Assignment to constant variable`);
-    results.push(` const array ki contents change ho sakti hain, variable nahi!`);
+    results.push('');
+    results.push('💡 Rule: loop mein "let" use karo!');
+    results.push('   "var" loop ke bahar bhi rehta hai → problems!');
 
     setOutput(results);
   };
 
-  // Exercise 3: Error messages when redeclaring variables
+  // ----------------------------------------------
+  // EXERCISE 2: Const Array
+  // ----------------------------------------------
+  // Simple basic example: const array mein items add/remove kaise karein?
+  const demonstrateConstArray = () => {
+    const results: string[] = [];
+
+    // 1. const array banaya - isme items change kar sakte hain
+    const fruits = ['apple', 'banana'];
+    results.push('Start: ' + fruits);
+
+    // 2. push() - end mein naya item add karo
+    fruits.push('mango');
+    results.push('push(mango): ' + fruits);
+
+    // 3. pop() - end se last item hatao
+    fruits.pop();
+    results.push('pop(): ' + fruits);
+
+    // 4. const variable ko dobara assign nahi kar sakte
+    // fruits = ['kiwi']; // ❌ ye error dega!
+
+    results.push('');
+    results.push('const array:');
+    results.push('✅ items change kar sakte hain (push/pop)');
+    results.push('❌ variable ko reassign nahi kar sakte');
+
+    setOutput(results);
+  };
+
+  // ----------------------------------------------
+  // EXERCISE 3: Redeclare Errors
+  // ----------------------------------------------
+  // Simple basic example: var, let, const ko dobara declare karna
   const demonstrateRedeclareErrors = () => {
     const results: string[] = [];
 
-    var x = 10;
-    var x = 20;
-    results.push(`var redeclare: No error — var x = 10 then var x = 20 → x = ${x}`);
+    // 1. var - ✅ dobara declare kar sakte hain (koi error nahi)
+    var a = 10;
+    var a = 20; // var ko dubara likh sakte hain!
+    results.push('var: a = ' + a + ' ✅ (redeclare allowed)');
 
-    let y = 10;
-    // let y = 20; // ❌ SyntaxError
-    results.push(`let redeclare: ❌ SyntaxError: Identifier 'y' has already been declared`);
-    results.push(`  (let y = ${y} already exists — cannot declare again)`);
+    // 2. let - ❌ dobara declare nahi kar sakte
+    // let b = 10;
+    // let b = 20; // ye line error degi! SyntaxError
+    results.push('let: ❌ redeclare nahi kar sakte');
 
-    const z = 10;
-    // const z = 20; // ❌ SyntaxError
-    results.push(`const redeclare: ❌ SyntaxError: Identifier 'z' has already been declared`);
-    results.push(`  (const z = ${z} already exists — cannot declare again)`);
+    // 3. const - ❌ dobara declare ya value change nahi kar sakte
+    // const c = 10;
+    // const c = 20; // error: SyntaxError
+    // c = 20;        // error: TypeError
+    results.push('const: ❌ redeclare nahi kar sakte');
+    results.push('const: ❌ reassign bhi nahi kar sakte');
 
-    // z = 20; // ❌ TypeError
-    results.push(`const reassign: ❌ TypeError: Assignment to constant variable`);
-    results.push(`  (z = 20 not allowed — const cannot be updated)`);
+    results.push('');
+    results.push('Rule:');
+    results.push('var ✅ redeclare ho sakta hai');
+    results.push('let ❌ redeclare nahi ho sakta');
+    results.push('const ❌ redeclare + reassign dono nahi');
+
+    setOutput(results);
+  };
+    results.push(`❌ const reassign: TypeError (Assignment to constant variable)`);
+
+    results.push('');
+    results.push('📌 Rule:');
+    results.push('   • var ✅ redeclare ho sakta hai');
+    results.push('   • let ❌ redeclare nahi ho sakta');
+    results.push('   • const ❌ redeclare + reassign dono nahi');
 
     setOutput(results);
   };
@@ -273,16 +308,16 @@ export function JavaScriptBasics() {
           <li>Objects and arrays can use const (you can modify contents, just not reassign)</li>
         </ul>
       </div>
-{/* Exercise for students */}
+{/* Challenge for students */}
       <div className="bg-blue-50 border-l-4 border-blue-400 p-4">
-        <h3 className="font-bold mb-2">🎯 Exercise for You</h3>
+        <h3 className="font-bold mb-2">🎯 Challenge Yourself</h3>
         <p className="text-sm mb-2">
-          Try modifying the code above to:
+          Now that you have seen the demos, try these challenges:
         </p>
         <ol className="list-decimal list-inside space-y-1 text-sm">
-          <li>Add a demo showing loop behavior with var vs let</li>
-          <li>Create a const array and demonstrate adding/removing items</li>
-          <li>Show the difference in error messages when trying to redeclare variables</li>
+          <li>Create a demo showing what happens when you use <code>const</code> with a <code>for...in</code> loop</li>
+          <li>Write a function that uses <code>let</code> inside a nested block and show it&apos;s not accessible outside</li>
+          <li>Compare <code>typeof</code> of a hoisted <code>var</code> vs accessing a <code>let</code> before declaration (try/catch)</li>
         </ol>
       </div>
     </div>
