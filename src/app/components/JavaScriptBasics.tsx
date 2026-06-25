@@ -75,72 +75,87 @@ export function JavaScriptBasics() {
     setOutput(results);
   };
 
-  // Exercise 1: Loop Behavior (var vs let)
+  // ============================================================
+  // 🎯 EXERCISE 1: Loop Behavior (var vs let)
+  // var → sab iterations EK HI variable share karti hain
+  // let → har iteration ka APNA variable hota hai
+  // ============================================================
   const demonstrateLoopBehavior = () => {
     const results: string[] = [];
 
-    results.push('--- VAR in loop (all share same i) ---');
+    // 🔴 var ke saath
+    results.push('--- var ---');
+    var nums1: number[] = [];
     for (var i = 0; i < 3; i++) {
-      setTimeout(() => {
-        results.push(`var: ${i}`);
-      }, 100);
+      nums1.push(i);
     }
+    results.push(`var i ki final value: ${i} (loop ke bahar bhi accessible!)`);
 
-    results.push('--- LET in loop (each iteration has own j) ---');
+    // 🟢 let ke saath
+    results.push('--- let ---');
+    let nums2: number[] = [];
     for (let j = 0; j < 3; j++) {
-      setTimeout(() => {
-        results.push(`let: ${j}`);
-      }, 100);
+      nums2.push(j);
     }
+    results.push(`let j loop ke andar values: ${nums2.join(', ')}`);
+    // results.push(`let j outside: ❌ error - j yahan exist nahi karta`);
 
-    setTimeout(() => {
-      setOutput([...results]);
-    }, 200);
-  };
-
-  // Exercise 2: Const Array — adding/removing items
-  const demonstrateConstArray = () => {
-    const results: string[] = [];
-
-    const fruits = ['apple', 'banana', 'mango'];
-    results.push(`const array initial: [${fruits}]`);
-
-    fruits.push('orange');
-    results.push(`after push('orange'): [${fruits}]`);
-
-    fruits.pop();
-    results.push(`after pop(): [${fruits}]`);
-
-    fruits.splice(1, 1);
-    results.push(`after splice(1,1) remove 'banana': [${fruits}]`);
-
-    results.push(`fruits = [] → ❌ TypeError: Assignment to constant variable`);
-    results.push(` const array ki contents change ho sakti hain, variable nahi!`);
+    results.push('');
+    results.push('➡️ var: loop khatam hone ke baad bhi i=3 yaad hai');
+    results.push('➡️ let: j sirf loop ke andar tha, bahar nahi');
 
     setOutput(results);
   };
 
-  // Exercise 3: Error messages when redeclaring variables
+  // ============================================================
+  // 🎯 EXERCISE 2: Const Array — Items Add/Remove
+  // const array: items change kar sakte ho, lekin dobara assign nahi
+  // ============================================================
+  const demonstrateConstArray = () => {
+    const results: string[] = [];
+
+    const fruits = ['apple', 'banana'];
+    results.push(`1. Shuru: [${fruits}]`);
+
+    fruits.push('mango'); // ✅ allowed
+    results.push(`2. push('mango'): [${fruits}]`);
+
+    fruits.pop(); // ✅ allowed
+    results.push(`3. pop() se last hat gaya: [${fruits}]`);
+
+    results.push(`4. fruits = ['kiwi'] ❌ ERROR - assignment nahi ho sakta`);
+    results.push('');
+    results.push('➡️ Rule: const array ki items change ho sakti hain');
+    results.push('➡️ Rule: const array ko dobara assign nahi kar sakte');
+
+    setOutput(results);
+  };
+
+  // ============================================================
+  // 🎯 EXERCISE 3: Redeclaration Errors
+  // var dubara declare kar sakte ho, let/const nahi!
+  // ============================================================
   const demonstrateRedeclareErrors = () => {
     const results: string[] = [];
 
-    var x = 10;
-    var x = 20;
-    results.push(`var redeclare: No error — var x = 10 then var x = 20 → x = ${x}`);
+    // ✅ var redeclare allowed
+    var a = 5;
+    var a = 10; // ✅ koi error nahi
+    results.push(`var a = 5, fir var a = 10 → a = ${a} ✅ allowed`);
 
-    let y = 10;
-    // let y = 20; // ❌ SyntaxError
-    results.push(`let redeclare: ❌ SyntaxError: Identifier 'y' has already been declared`);
-    results.push(`  (let y = ${y} already exists — cannot declare again)`);
+    // ❌ let redeclare not allowed
+    let b = 5;
+    results.push(`let b = 5 ✅`);
+    results.push(`let b = 10 ❌ SyntaxError (dubara declare nahi kar sakte)`);
 
-    const z = 10;
-    // const z = 20; // ❌ SyntaxError
-    results.push(`const redeclare: ❌ SyntaxError: Identifier 'z' has already been declared`);
-    results.push(`  (const z = ${z} already exists — cannot declare again)`);
+    // ❌ const redeclare not allowed
+    const c = 5;
+    results.push(`const c = 5 ✅`);
+    results.push(`const c = 10 ❌ SyntaxError`);
+    results.push(`c = 10 ❌ TypeError (const ko update bhi nahi kar sakte)`);
 
-    // z = 20; // ❌ TypeError
-    results.push(`const reassign: ❌ TypeError: Assignment to constant variable`);
-    results.push(`  (z = 20 not allowed — const cannot be updated)`);
+    results.push('');
+    results.push('➡️ var = redeclare ✅ | let = redeclare ❌ | const = redeclare ❌ + update ❌');
 
     setOutput(results);
   };
@@ -198,56 +213,55 @@ export function JavaScriptBasics() {
           </button>
         </div>
 
-        {/* Exercise 1 — Loop Behavior */}
+        {/* 🎯 Exercise 1 — Loop Behavior (var vs let) */}
         <div className="border rounded-lg p-4 border-orange-300 bg-orange-50">
           <h3 className="font-semibold mb-2">
-            4. Loop Behavior (var vs let)
-            
+            🎯 Exercise 1: Loop Behavior — var vs let
           </h3>
           <p className="text-sm text-gray-600 mb-3">
-            <strong>var</strong> loop mein sab iterations ek hi variable share karte hain.
-            <strong> let</strong> har iteration ko apna alag binding deta hai.
+            <strong>var</strong> → loop mein <strong>ek hi variable</strong> sab iterations mein share hota hai (isliye sab 3 print karega).<br />
+            <strong>let</strong> → <strong>har iteration ko apna naya variable</strong> milta hai (isliye 0,1,2 print karega).
           </p>
           <button
             onClick={demonstrateLoopBehavior}
             className="px-4 py-2 bg-orange-500 text-white rounded hover:bg-orange-600"
           >
-            Run Loop Demo
+            ▶ Run Loop Demo
           </button>
         </div>
 
-        {/* Exercise 2 — Const Array */}
+        {/* 🎯 Exercise 2 — Const Array */}
         <div className="border rounded-lg p-4 border-teal-300 bg-teal-50">
           <h3 className="font-semibold mb-2">
-            5. Const Array — Add / Remove Items
-            
+            🎯 Exercise 2: Const Array — Items Add/Remove karna
           </h3>
           <p className="text-sm text-gray-600 mb-3">
-            <strong>const</strong> array ki contents change ho sakti hain (push, pop, splice) — lekin array ko dobara assign nahi kar sakte.
+            <strong>const</strong> array ki <strong>contents (items) change</strong> ho sakti hain — push, pop, splice sab chalega!<br />
+            Lekin array ko <strong>dobara assign nahi kar sakte</strong> ❌
           </p>
           <button
             onClick={demonstrateConstArray}
             className="px-4 py-2 bg-teal-500 text-white rounded hover:bg-teal-600"
           >
-            Run Const Array Demo
+            ▶ Run Const Array Demo
           </button>
         </div>
 
-        {/* Exercise 3 — Redeclare Errors */}
+        {/* 🎯 Exercise 3 — Redeclare Errors */}
         <div className="border rounded-lg p-4 border-red-300 bg-red-50">
           <h3 className="font-semibold mb-2">
-            6. Redeclaration Error Messages
-            
+            🎯 Exercise 3: Redeclaration Errors — var ✅, let & const ❌
           </h3>
           <p className="text-sm text-gray-600 mb-3">
-            <strong>var</strong> redeclare ho sakta hai bina error ke.
-            <strong> let</strong> aur <strong>const</strong> redeclare karne par SyntaxError aata hai.
+            <strong>var</strong> ✅ dubara declare ho sakta hai bina error ke.<br />
+            <strong>let</strong> ❌ aur <strong>const</strong> ❌ dubara declare karo toh <strong>SyntaxError</strong> aata hai.<br />
+            <strong>const</strong> ko nayi value assign karo toh <strong>TypeError</strong> aata hai.
           </p>
           <button
             onClick={demonstrateRedeclareErrors}
             className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
           >
-            Run Error Messages Demo
+            ▶ Run Error Demo
           </button>
         </div>
 
