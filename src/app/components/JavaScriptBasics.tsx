@@ -90,6 +90,100 @@ export function JavaScriptBasics() {
     setOutput(results);
   };
 
+  // Demo 5: const array - adding and removing items
+  const demonstrateConstArray = () => {
+    const results: string[] = [];
+
+    // Create a const array
+    const items: string[] = ['Apple', 'Banana', 'Cherry'];
+    results.push(`Initial array: [${items.join(', ')}]`);
+
+    // Adding items (push, unshift, splice)
+    items.push('Date'); // Adds to end
+    results.push(`After push('Date'): [${items.join(', ')}]`);
+
+    items.unshift('Apricot'); // Adds to beginning
+    results.push(`After unshift('Apricot'): [${items.join(', ')}]`);
+
+    items.splice(2, 0, 'Blueberry'); // Inserts at index 2
+    results.push(`After splice(2, 0, 'Blueberry'): [${items.join(', ')}]`);
+
+    // Removing items (pop, shift, splice)
+    const removedEnd = items.pop(); // Removes from end
+    results.push(`After pop() — removed "${removedEnd}": [${items.join(', ')}]`);
+
+    const removedStart = items.shift(); // Removes from beginning
+    results.push(`After shift() — removed "${removedStart}": [${items.join(', ')}]`);
+
+    const removedMiddle = items.splice(2, 1); // Removes 1 item at index 2
+    results.push(`After splice(2, 1) — removed "${removedMiddle[0]}": [${items.join(', ')}]`);
+
+    // Proving const still works — we can't reassign
+    results.push('');
+    results.push('✅ Key takeaway: const prevents reassignment, not mutation.');
+    results.push(`Final array still exists: [${items.join(', ')}]`);
+    // items = ['X', 'Y']; // 🔴 Would throw: "Assignment to constant variable"
+
+    setOutput(results);
+  };
+
+  // Demo 6: Redeclaration error messages
+  const demonstrateRedeclarationErrors = () => {
+    const results: string[] = [];
+
+    results.push('--- Attempting redeclaration with var, let, and const ---');
+    results.push('');
+
+    // VAR — redeclaration is allowed
+    results.push('1️⃣ var can be redeclared without error:');
+    try {
+      eval('var x = 1; var x = 2;');
+      results.push('   ✅ var x = 1; var x = 2; → No error (redeclaration allowed)');
+    } catch (e: unknown) {
+      results.push(`   ❌ ${(e as Error).message}`);
+    }
+
+    // LET — redeclaration in same scope throws SyntaxError
+    results.push('');
+    results.push('2️⃣ let cannot be redeclared in the same scope:');
+    try {
+      eval('let y = 1; let y = 2;');
+    } catch (e: unknown) {
+      results.push(`   ❌ let y = 1; let y = 2; → ${(e as Error).message}`);
+    }
+
+    // CONST — redeclaration in same scope throws SyntaxError
+    results.push('');
+    results.push('3️⃣ const cannot be redeclared in the same scope:');
+    try {
+      eval('const z = 1; const z = 2;');
+    } catch (e: unknown) {
+      results.push(`   ❌ const z = 1; const z = 2; → ${(e as Error).message}`);
+    }
+
+    // Mixed redeclaration attempts
+    results.push('');
+    results.push('4️⃣ Cross-type redeclaration also fails for let/const:');
+    try {
+      eval('var a = 1; let a = 2;');
+    } catch (e: unknown) {
+      results.push(`   ❌ var a = 1; let a = 2; → ${(e as Error).message}`);
+    }
+    try {
+      eval('let b = 1; const b = 2;');
+    } catch (e: unknown) {
+      results.push(`   ❌ let b = 1; const b = 2; → ${(e as Error).message}`);
+    }
+
+    results.push('');
+    results.push('💡 Summary:');
+    results.push('   var  → ✅ Redeclaration allowed (any number of times)');
+    results.push('   let  → ❌ SyntaxError: Identifier has already been declared');
+    results.push('   const → ❌ SyntaxError: Identifier has already been declared');
+
+    setOutput(results);
+  };
+
   // Demo 4: Loop behavior with var vs let
   const demonstrateLoopVarLet = () => {
     const results: string[] = [];
@@ -179,6 +273,32 @@ export function JavaScriptBasics() {
             Run Loop Demo
           </button>
         </div>
+
+        <div className="border rounded-lg p-4">
+          <h3 className="font-semibold mb-2">5. const Array — Add & Remove Items</h3>
+          <p className="text-sm text-gray-600 mb-3">
+            <code>const</code> prevents reassignment but allows mutation. You can add/remove items from a <code>const</code> array.
+          </p>
+          <button
+            onClick={demonstrateConstArray}
+            className="px-4 py-2 bg-teal-500 text-white rounded hover:bg-teal-600"
+          >
+            Run Array Demo
+          </button>
+        </div>
+
+        <div className="border rounded-lg p-4">
+          <h3 className="font-semibold mb-2">6. Redeclaration Error Messages</h3>
+          <p className="text-sm text-gray-600 mb-3">
+            <code>var</code> allows redeclaration, but <code>let</code> and <code>const</code> throw errors.
+          </p>
+          <button
+            onClick={demonstrateRedeclarationErrors}
+            className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+          >
+            Run Redeclaration Demo
+          </button>
+        </div>
       </div>
 
       {/* Output Display */}
@@ -202,16 +322,12 @@ export function JavaScriptBasics() {
         </ul>
       </div>
 
-      {/* Exercise for students */}
-      <div className="bg-blue-50 border-l-4 border-blue-400 p-4">
-        <h3 className="font-bold mb-2">🎯 Exercise for You</h3>
-        <p className="text-sm mb-2">
-          Try modifying the code above to:
+      {/* Exercise completed */}
+      <div className="bg-green-50 border-l-4 border-green-400 p-4">
+        <h3 className="font-bold mb-2">🎉 All Exercises Completed!</h3>
+        <p className="text-sm">
+          Both tasks are now implemented as interactive demos above.
         </p>
-        <ol className="list-decimal list-inside space-y-1 text-sm">
-          <li>Create a const array and demonstrate adding/removing items</li>
-          <li>Show the difference in error messages when trying to redeclare variables</li>
-        </ol>
       </div>
     </div>
   );
