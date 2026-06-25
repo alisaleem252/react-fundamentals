@@ -75,89 +75,45 @@ export function JavaScriptBasics() {
     setOutput(results);
   };
 
-  // ============================================================
-  // 🎯 EXERCISE 1: Loop Behavior (var vs let)
-  // var → sab iterations EK HI variable share karti hain
-  // let → har iteration ka APNA variable hota hai
-  // ============================================================
+  // 🎯 EXERCISE 1: Loop Behavior — var (shared) vs let (scoped)
   const demonstrateLoopBehavior = () => {
-    const results: string[] = [];
+    const r: string[] = [];
+    const add = (s: string) => r.push(s);
 
-    // 🔴 var ke saath
-    results.push('--- var ---');
-    var nums1: number[] = [];
-    for (var i = 0; i < 3; i++) {
-      nums1.push(i);
-    }
-    results.push(`var i ki final value: ${i} (loop ke bahar bhi accessible!)`);
+    add('--- var: ek hi variable sab mein share ---');
+    for (var i = 0; i < 3; i++) { /* i exists outside loop */ }
+     add(`var value i = ${i} (accessible!)`);
 
-    // 🟢 let ke saath
-    results.push('--- let ---');
-    let nums2: number[] = [];
-    for (let j = 0; j < 3; j++) {
-      nums2.push(j);
-    }
-    results.push(`let j loop ke andar values: ${nums2.join(', ')}`);
-    // results.push(`let j outside: ❌ error - j yahan exist nahi karta`);
+    // add('--- let: har iteration ka apna variable ---');
+    for (let j = 0; j < 3; j++) { add(`  j = ${j} (sirf andar)`); }
 
-    results.push('');
-    results.push('➡️ var: loop khatam hone ke baad bhi i=3 yaad hai');
-    results.push('➡️ let: j sirf loop ke andar tha, bahar nahi');
-
-    setOutput(results);
+    setOutput(r);
   };
 
-  // ============================================================
-  // 🎯 EXERCISE 2: Const Array — Items Add/Remove
-  // const array: items change kar sakte ho, lekin dobara assign nahi
-  // ============================================================
+  // 🎯 EXERCISE 2: Const Array — items change ho sakte hain, reassign nahi
   const demonstrateConstArray = () => {
-    const results: string[] = [];
+    const r: string[] = [];
+    const add = (s: string) => r.push(s);
 
     const fruits = ['apple', 'banana'];
-    results.push(`1. Shuru: [${fruits}]`);
+    add(`initial: [${fruits}]`);
+    fruits.push('mango');  add(`after push:  [${fruits}]`);
+    fruits.pop();          add(`after pop:   [${fruits}]`);
+    add(`❌ fruits = ['kiwi'] not allowed (const reassign error)`);
 
-    fruits.push('mango'); // ✅ allowed
-    results.push(`2. push('mango'): [${fruits}]`);
-
-    fruits.pop(); // ✅ allowed
-    results.push(`3. pop() se last hat gaya: [${fruits}]`);
-
-    results.push(`4. fruits = ['kiwi'] ❌ ERROR - assignment nahi ho sakta`);
-    results.push('');
-    results.push('➡️ Rule: const array ki items change ho sakti hain');
-    results.push('➡️ Rule: const array ko dobara assign nahi kar sakte');
-
-    setOutput(results);
+    setOutput(r);
   };
 
-  // ============================================================
-  // 🎯 EXERCISE 3: Redeclaration Errors
-  // var dubara declare kar sakte ho, let/const nahi!
-  // ============================================================
+  // 🎯 EXERCISE 3: Redeclaration — var ✅ let ❌ const ❌
   const demonstrateRedeclareErrors = () => {
-    const results: string[] = [];
+    const r: string[] = [];
+    const add = (s: string) => r.push(s);
 
-    // ✅ var redeclare allowed
-    var a = 5;
-    var a = 10; // ✅ koi error nahi
-    results.push(`var a = 5, fir var a = 10 → a = ${a} ✅ allowed`);
+    var a = 5; var a = 10; add(`var a = 5 → var a = 10 ✅ a = ${a}`);
+    let b = 5;             add(`let b = 5 ✅ | let b = 10 ❌ SyntaxError`);
+    const c = 5;           add(`const c = 5 ✅ | const c = 10 ❌ SyntaxError | c = 10 ❌ TypeError`);
 
-    // ❌ let redeclare not allowed
-    let b = 5;
-    results.push(`let b = 5 ✅`);
-    results.push(`let b = 10 ❌ SyntaxError (dubara declare nahi kar sakte)`);
-
-    // ❌ const redeclare not allowed
-    const c = 5;
-    results.push(`const c = 5 ✅`);
-    results.push(`const c = 10 ❌ SyntaxError`);
-    results.push(`c = 10 ❌ TypeError (const ko update bhi nahi kar sakte)`);
-
-    results.push('');
-    results.push('➡️ var = redeclare ✅ | let = redeclare ❌ | const = redeclare ❌ + update ❌');
-
-    setOutput(results);
+    setOutput(r);
   };
 
   return (
