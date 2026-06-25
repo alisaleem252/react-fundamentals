@@ -220,6 +220,7 @@ export function UseStateDemo() {
             className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
           >
             Add
+            {/* Exercise 1: Add a "Clear All" button to the todo list */}
           </button>
           {items.length > 0 && (
             <button
@@ -255,6 +256,7 @@ export function UseStateDemo() {
                 ) : (
                   <>
                     <span className="flex-1">{item}</span>
+                    {/* Exercise 4: Add edit functionality to the todo list items */}
                     <button
                       onClick={() => startEditing(index, item)}
                       className="px-3 py-1 bg-yellow-500 text-white text-sm rounded hover:bg-yellow-600"
@@ -278,7 +280,7 @@ export function UseStateDemo() {
         </p>
       </div>
 
-      {/* Demo 6: Color Picker (Exercise) */}
+      {/* excercise 2: Color Picker  */}
       <div className="border rounded-lg p-4" style={{ backgroundColor: bgColor }}>
         <h3 className="font-semibold mb-3">6. 🎨 Color Picker</h3>
         <div className="flex items-center gap-3">
@@ -301,7 +303,7 @@ export function UseStateDemo() {
         </p>
       </div>
 
-      {/* Demo 7: Simple Calculator (Exercise) */}
+      {/* excercse 3: Simple Calculator  */}
       <div className="border rounded-lg p-4">
         <h3 className="font-semibold mb-3">7. 🔢 Simple Calculator</h3>
         <div className="flex items-center gap-2 flex-wrap">
