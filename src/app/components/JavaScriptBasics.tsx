@@ -21,13 +21,13 @@ export function JavaScriptBasics() {
 
     // VAR - Function scoped
     if (true) {
-      var varVariable = "I'm var - accessible outside this block, Branch of Ali";
+      var varVariable = "var is visible outside this block";
     }
     results.push(`var outside block: ${varVariable}`);
 
     // LET - Block scoped
     if (true) {
-      let letVariable = "I'm let - only inside this block";
+      let letVariable = "let is only visible inside this block";
       results.push(`let inside block: ${letVariable}`);
     }
     // Uncommenting below would cause an error:
@@ -41,25 +41,25 @@ export function JavaScriptBasics() {
     const results: string[] = [];
 
     // VAR - Can be redeclared and updated
-    var varNum = 10;
+    var varNum = 100;
     results.push(`var initial: ${varNum}`);
-    varNum = 20; // Works
+    varNum = 200; // Works
     results.push(`var updated: ${varNum}`);
-    var varNum = 30; // Redeclaration works (not recommended!)
+    var varNum = 300; // Redeclaration works (not recommended!)
     results.push(`var redeclared: ${varNum}`);
 
     // LET - Can be updated but not redeclared
-    let letNum = 10;
+    let letNum = 100;
     results.push(`let initial: ${letNum}`);
-    letNum = 20; // Works
+    letNum = 200; // Works
     results.push(`let updated: ${letNum}`);
-    // let letNum = 30; // Would cause error!
+    // let letNum = 300; // Would cause error!
 
     // CONST - Cannot be updated or redeclared
-    const constNum = 10;
+    const constNum = 100;
     results.push(`const value: ${constNum}`);
-    // constNum = 20; // Would cause error!
-    // const constNum = 30; // Would cause error!
+    // constNum = 200; // Would cause error!
+    // const constNum = 300; // Would cause error!
 
     // IMPORTANT: const with objects/arrays
     const person = { name: 'John', age: 25 };
@@ -75,15 +75,15 @@ export function JavaScriptBasics() {
   const demonstrateHoisting = () => {
     const results: string[] = [];
 
-    // VAR is hoisted (declared at the top of function, but undefined until assigned)
+    // VAR is hoisted: declaration is moved to the top, but value is undefined until assignment
     results.push(`var before declaration: ${typeof varHoisted}`); // undefined
-    var varHoisted = 'I am hoisted';
+    var varHoisted = 'hoisted value';
     results.push(`var after declaration: ${varHoisted}`);
 
-    // LET and CONST are not hoisted (temporal dead zone)
+    // LET and CONST are not hoisted in the same way
     // Uncommenting would cause error:
     // results.push(`let before declaration: ${letNotHoisted}`); // Error!
-    let letNotHoisted = 'I am not hoisted';
+    let letNotHoisted = 'not hoisted value';
     results.push(`let after declaration: ${letNotHoisted}`);
 
     setOutput(results);
@@ -95,26 +95,32 @@ export function JavaScriptBasics() {
 
     results.push('=== VAR in Loop (Closure Problem) ===');
     const varFunctions: (() => void)[] = [];
-    for (var i = 0; i < 3; i++) {
+    for (var i = 1; i <= 3; i++) {
       varFunctions.push(() => {
-        results.push(`var loop - function ${varFunctions.length - 1} sees i = ${i}`);
+        results.push(`var loop sees i = ${i}`);
       });
     }
-    results.push(`After loop: i = ${i} (var escapes loop!)`);
-    varFunctions.forEach((fn) => fn()); // All will reference the final value of i
+    results.push(`After loop: i = ${i} (var escapes loop)`);
+    varFunctions.forEach((fn, index) => {
+      results.push(`function ${index + 1}:`);
+      fn();
+    });
 
     results.push('');
     results.push('=== LET in Loop (Block-scoped) ===');
     const letFunctions: (() => void)[] = [];
-    for (let j = 0; j < 3; j++) {
+    for (let j = 1; j <= 3; j++) {
       letFunctions.push(() => {
-        results.push(`let loop - function captured j = ${j}`);
+        results.push(`let loop captured j = ${j}`);
       });
     }
-    // i is not accessible here (commented out to avoid error):
+    // j is not accessible here (commented out to avoid error):
     // results.push(`After loop: j = ${j}`); // Error: j is not defined
     results.push('(j is not accessible here - block-scoped)');
-    letFunctions.forEach((fn) => fn()); // Each captures its own j value
+    letFunctions.forEach((fn, index) => {
+      results.push(`function ${index + 1}:`);
+      fn();
+    });
 
     setOutput(results);
   };
@@ -170,68 +176,40 @@ export function JavaScriptBasics() {
   const demonstrateRedeclarationErrors = () => {
     const results: string[] = [];
 
-    results.push('=== Trying to redeclare with VAR ===');
+    results.push('=== var redeclaration ===');
+    results.push('var x = 1;');
+    results.push('var x = 2;  // allowed');
+    results.push('Result: var allows redeclaration, so x becomes 2');
+
+    results.push('');
+    results.push('=== let redeclaration ===');
     try {
-      // In strict mode or real scenarios, you can't redeclare in same scope
-      // But showing the concept:
-      results.push('var x = 1;  // OK');
-      results.push('var x = 2;  // OK - var allows redeclaration (confusing!)');
-      results.push('✓ No error - var allows redeclaration (this is bad!)');
+      eval('let y = 1; let y = 2;');
     } catch (e: any) {
-      results.push(`✗ Error: ${e.message}`);
+      results.push(`✗ ${e.name}: ${e.message}`);
     }
 
     results.push('');
-    results.push('=== Trying to redeclare with LET ===');
+    results.push('=== const redeclaration ===');
     try {
-      eval(`
-        let y = 1;
-        let y = 2;  // SyntaxError!
-      `);
-      results.push('let y = 2;  // Would cause error');
+      eval('const z = 1; const z = 2;');
     } catch (e: any) {
-      results.push(`✗ SyntaxError: Identifier 'y' has already been declared`);
+      results.push(`✗ ${e.name}: ${e.message}`);
     }
 
     results.push('');
-    results.push('=== Trying to redeclare with CONST ===');
+    results.push('=== const reassignment ===');
     try {
-      eval(`
-        const z = 1;
-        const z = 2;  // SyntaxError!
-      `);
-      results.push('const z = 2;  // Would cause error');
+      eval('const a = 1; a = 2;');
     } catch (e: any) {
-      results.push(`✗ SyntaxError: Identifier 'z' has already been declared`);
+      results.push(`✗ ${e.name}: ${e.message}`);
     }
 
     results.push('');
-    results.push('=== Trying to reassign CONST ===');
-    try {
-      eval(`
-        const a = 1;
-        a = 2;  // TypeError!
-      `);
-    } catch (e: any) {
-      results.push(`✗ TypeError: Assignment to constant variable`);
-    }
-
-    results.push('');
-    results.push('=== Trying to redeclare with DIFFERENT keywords ===');
-    try {
-      eval(`
-        let b = 1;
-        var b = 2;  // Also not allowed in same scope
-      `);
-    } catch (e: any) {
-      results.push(`✗ SyntaxError: Identifier 'b' has already been declared`);
-    }
-
-    results.push('');
-    results.push('📝 Summary:');
-    results.push('• var: allows redeclaration (very confusing)');
-    results.push('• let & const: prevent redeclaration (SyntaxError)');
-    results.push('• const: also prevents reassignment (TypeError)');
+    results.push('Summary:');
+    results.push('• var: can be redeclared in the same scope');
+    results.push('• let: redeclaration throws SyntaxError');
+    results.push('• const: redeclaration throws SyntaxError and reassignment throws TypeError');
 
     setOutput(results);
   };
