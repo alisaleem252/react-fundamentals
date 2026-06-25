@@ -17,6 +17,8 @@ export function JavaScriptBasics() {
 
   // Demo 1: Scope differences
   const demonstrateScope = () => {
+    let abc = 10;
+    alert(abc);
     const results: string[] = [];
 
     // VAR - Function scoped
