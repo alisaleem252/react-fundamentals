@@ -12,7 +12,6 @@ import { useState } from 'react';
  * - const: Block-scoped, cannot be redeclared, cannot be updated, not hoisted
  */
 
-
 export function JavaScriptBasics() {
   const [output, setOutput] = useState<string[]>([]);
   // Demo 1: Scope differences
@@ -220,6 +219,127 @@ export function JavaScriptBasics() {
     setOutput(results);
   };
 
+  // Demo 5: const array - adding and removing items
+  const demonstrateConstArray = () => {
+    const results: string[] = [];
+
+    // Create a const array
+    const items: string[] = ['Apple', 'Banana', 'Cherry'];
+    results.push(`Initial array: [${items.join(', ')}]`);
+
+    // Adding items (push, unshift, splice)
+    items.push('Date'); // Adds to end
+    results.push(`After push('Date'): [${items.join(', ')}]`);
+
+    items.unshift('Apricot'); // Adds to beginning
+    results.push(`After unshift('Apricot'): [${items.join(', ')}]`);
+
+    items.splice(2, 0, 'Blueberry'); // Inserts at index 2
+    results.push(`After splice(2, 0, 'Blueberry'): [${items.join(', ')}]`);
+
+    // Removing items (pop, shift, splice)
+    const removedEnd = items.pop(); // Removes from end
+    results.push(`After pop() — removed "${removedEnd}": [${items.join(', ')}]`);
+
+    const removedStart = items.shift(); // Removes from beginning
+    results.push(`After shift() — removed "${removedStart}": [${items.join(', ')}]`);
+
+    const removedMiddle = items.splice(2, 1); // Removes 1 item at index 2
+    results.push(`After splice(2, 1) — removed "${removedMiddle[0]}": [${items.join(', ')}]`);
+
+    // Proving const still works — we can't reassign
+    results.push('');
+    results.push('✅ Key takeaway: const prevents reassignment, not mutation.');
+    results.push(`Final array still exists: [${items.join(', ')}]`);
+    // items = ['X', 'Y']; // 🔴 Would throw: "Assignment to constant variable"
+
+    setOutput(results);
+  };
+
+  // Demo 6: Redeclaration error messages
+  const demonstrateRedeclarationErrors = () => {
+    const results: string[] = [];
+
+    results.push('--- Attempting redeclaration with var, let, and const ---');
+    results.push('');
+
+    // VAR — redeclaration is allowed
+    results.push('1️⃣ var can be redeclared without error:');
+    try {
+      eval('var x = 1; var x = 2;');
+      results.push('   ✅ var x = 1; var x = 2; → No error (redeclaration allowed)');
+    } catch (e: unknown) {
+      results.push(`   ❌ ${(e as Error).message}`);
+    }
+
+    // LET — redeclaration in same scope throws SyntaxError
+    results.push('');
+    results.push('2️⃣ let cannot be redeclared in the same scope:');
+    try {
+      eval('let y = 1; let y = 2;');
+    } catch (e: unknown) {
+      results.push(`   ❌ let y = 1; let y = 2; → ${(e as Error).message}`);
+    }
+
+    // CONST — redeclaration in same scope throws SyntaxError
+    results.push('');
+    results.push('3️⃣ const cannot be redeclared in the same scope:');
+    try {
+      eval('const z = 1; const z = 2;');
+    } catch (e: unknown) {
+      results.push(`   ❌ const z = 1; const z = 2; → ${(e as Error).message}`);
+    }
+
+    // Mixed redeclaration attempts
+    results.push('');
+    results.push('4️⃣ Cross-type redeclaration also fails for let/const:');
+    try {
+      eval('var a = 1; let a = 2;');
+    } catch (e: unknown) {
+      results.push(`   ❌ var a = 1; let a = 2; → ${(e as Error).message}`);
+    }
+    try {
+      eval('let b = 1; const b = 2;');
+    } catch (e: unknown) {
+      results.push(`   ❌ let b = 1; const b = 2; → ${(e as Error).message}`);
+    }
+
+    results.push('');
+    results.push('💡 Summary:');
+    results.push('   var  → ✅ Redeclaration allowed (any number of times)');
+    results.push('   let  → ❌ SyntaxError: Identifier has already been declared');
+    results.push('   const → ❌ SyntaxError: Identifier has already been declared');
+
+    setOutput(results);
+  };
+
+  // Demo 4: Loop behavior with var vs let
+  const demonstrateLoopVarLet = () => {
+    const results: string[] = [];
+
+    results.push('--- var in a loop ---');
+    var funcsWithVar: (() => string)[] = [];
+    for (var i = 0; i < 3; i++) {
+      funcsWithVar.push(() => `var i = ${i}`);
+    }
+    // All callbacks reference the same `i` which is now 3
+    funcsWithVar.forEach((fn) => results.push(fn()));
+
+    results.push('--- let in a loop ---');
+    const funcsWithLet: (() => string)[] = [];
+    for (let j = 0; j < 3; j++) {
+      funcsWithLet.push(() => `let j = ${j}`);
+    }
+    // Each callback captures its own `j` value (0, 1, 2)
+    funcsWithLet.forEach((fn) => results.push(fn()));
+
+    results.push('');
+    results.push('var: all closures share the same hoisted variable');
+    results.push('let: each iteration gets its own binding');
+
+    setOutput(results);
+  };
+
   return (
     <div className="space-y-6">
       <div>
@@ -273,10 +393,10 @@ export function JavaScriptBasics() {
         <div className="border rounded-lg p-4">
           <h3 className="font-semibold mb-2">4. Loop Behavior: var vs let</h3>
           <p className="text-sm text-gray-600 mb-3">
-            var leaks out of loops and shares bindings; let is block-scoped per iteration.
+            In a loop, <code>var</code> shares one variable across all iterations, while <code>let</code> creates a new binding each time.
           </p>
           <button
-            onClick={demonstrateLoopVarVsLet}
+            onClick={demonstrateLoopVarLet}
             className="px-4 py-2 bg-orange-500 text-white rounded hover:bg-orange-600"
           >
             Run Loop Demo
@@ -284,28 +404,28 @@ export function JavaScriptBasics() {
         </div>
 
         <div className="border rounded-lg p-4">
-          <h3 className="font-semibold mb-2">5. Const Array: Add & Remove</h3>
+          <h3 className="font-semibold mb-2">5. const Array — Add & Remove Items</h3>
           <p className="text-sm text-gray-600 mb-3">
-            const arrays can be mutated (push/pop/splice) but not reassigned.
+            <code>const</code> prevents reassignment but allows mutation. You can add/remove items from a <code>const</code> array.
           </p>
           <button
             onClick={demonstrateConstArray}
-            className="px-4 py-2 bg-pink-500 text-white rounded hover:bg-pink-600"
+            className="px-4 py-2 bg-teal-500 text-white rounded hover:bg-teal-600"
           >
-            Run Const Array Demo
+            Run Array Demo
           </button>
         </div>
 
         <div className="border rounded-lg p-4">
-          <h3 className="font-semibold mb-2">6. Redeclaration Errors</h3>
+          <h3 className="font-semibold mb-2">6. Redeclaration Error Messages</h3>
           <p className="text-sm text-gray-600 mb-3">
-            See the actual error messages when trying to redeclare let/const.
+            <code>var</code> allows redeclaration, but <code>let</code> and <code>const</code> throw errors.
           </p>
           <button
             onClick={demonstrateRedeclarationErrors}
             className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
           >
-            Run Error Demo
+            Run Redeclaration Demo
           </button>
         </div>
       </div>
@@ -331,17 +451,12 @@ export function JavaScriptBasics() {
         </ul>
       </div>
 
-      {/* Exercise for students */}
+      {/* Exercise completed */}
       <div className="bg-green-50 border-l-4 border-green-400 p-4">
-        <h3 className="font-bold mb-2">✅ Exercise Complete!</h3>
-        <p className="text-sm mb-2">
-          All three exercises have been implemented — try the new demos above:
+        <h3 className="font-bold mb-2">🎉 All Exercises Completed!</h3>
+        <p className="text-sm">
+          Both tasks are now implemented as interactive demos above.
         </p>
-        <ol className="list-decimal list-inside space-y-1 text-sm">
-          <li>✅ <strong>Demo 4</strong> — Loop behavior with var vs let (leaking + closure trap)</li>
-          <li>✅ <strong>Demo 5</strong> — Const array: push, pop, shift, unshift, splice, index assignment</li>
-          <li>✅ <strong>Demo 6</strong> — Redeclaration errors: SyntaxError vs TypeError caught live</li>
-        </ol>
       </div>
     </div>
   );
