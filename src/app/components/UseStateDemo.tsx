@@ -66,11 +66,12 @@ export function UseStateDemo() {
     // setCount(count + 1);
 
     // CORRECT: Each uses the updated value
-    setCount(prev => prev + 1);
-    setCount(prev => prev + 1);
-    setCount(prev => prev + 1);
-    setCount(prev => prev + 1);
-    setCount(prev => prev + 1);
+    // setCount(prev => prev + 1);
+    // setCount(prev => prev + 1);
+    // setCount(prev => prev + 1);
+    // setCount(prev => prev + 1);
+    // setCount(prev => prev + 1);
+    setCount(prev => prev + 5); // Simpler way to increment by 5
   };
 
   // Updating object state (must create new object!)
@@ -246,20 +247,30 @@ export function UseStateDemo() {
         </p>
       </div>
 
-      {/* Demo 3: Toggle (Boolean State) */}
-      <div className="border rounded-lg p-4">
-        <h3 className="font-semibold mb-3">3. Toggle (Boolean State)</h3>
-        <button
-          onClick={() => setIsVisible(!isVisible)} // Toggle between true/false
-          className="px-4 py-2 bg-purple-500 text-white rounded hover:bg-purple-600"
-        >
-          {isVisible ? 'Hide' : 'Show'} Secret Message
-        </button>
-        {isVisible && ( // Conditional rendering based on state
-          <div className="mt-3 p-4 bg-purple-100 rounded">
-            🎉 This is a secret message! State value is: {isVisible.toString()}
+      {/* Demo 3: Toggle (Boolean State) - Bulb ON/OFF */}
+      <div className={`border rounded-lg p-4 transition-colors duration-300 ${isVisible ? 'bg-yellow-50 border-yellow-300' : ''}`}>
+        <h3 className="font-semibold mb-3">3. Toggle (Boolean State) - 💡 Bulb Example</h3>
+        <div className="flex flex-col items-center gap-4">
+          <div
+            className="text-6xl transition-all duration-300 cursor-pointer"
+            onClick={() => setIsVisible(!isVisible)}
+          >
+            {isVisible ? '💡' : '⚫'}
           </div>
-        )}
+          <button
+            onClick={() => setIsVisible(!isVisible)}
+            className={`px-6 py-2 rounded text-white font-bold transition-all duration-300 ${isVisible
+              ? 'bg-yellow-500 hover:bg-yellow-600 shadow-lg'
+              : 'bg-gray-700 hover:bg-gray-800'
+              }`}
+          >
+            {isVisible ? '🔌 Turn OFF' : '🔌 Turn ON'}
+          </button>
+          <p className="text-sm text-gray-600">
+            Bulb is currently: <strong>{isVisible ? 'ON 💡' : 'OFF ⚫'}</strong>
+            &nbsp;| State value: <code>{isVisible.toString()}</code>
+          </p>
+        </div>
       </div>
 
       {/* Demo 4: Form (Object State) */}
