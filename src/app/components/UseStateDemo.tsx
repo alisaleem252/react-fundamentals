@@ -1,263 +1,163 @@
 import { useState } from 'react';
 
-/**
- * USESTATE HOOK
- *
- * useState is the most fundamental React hook. It allows you to add state to functional components.
- *
- * SYNTAX: const [stateValue, setStateFunction] = useState(initialValue);
- *
- * - stateValue: Current value of the state
- * - setStateFunction: Function to update the state
- * - initialValue: The starting value
- *
- * IMPORTANT: When state changes, React re-renders the component!
- */
+// useState = store data React watches. When it changes, React re-renders.
+// Syntax: const [value, setValue] = useState(initialValue)
 
 export function UseStateDemo() {
-  // Example 1: Simple counter with number state
-  const [count, setCount] = useState(0); // Initial value is 0
-
-  // Example 2: String state for user input
-  const [name, setName] = useState(''); // Initial value is empty string
-
-  // Example 3: Boolean state for toggling
-  const [isVisible, setIsVisible] = useState(false); // Initial value is false
-
-  // Example 4: Object state (more complex)
-  const [user, setUser] = useState({
-    firstName: '',
-    lastName: '',
-    age: 0
-  });
-
-  // Example 5: Array state
+  // ====== State ======
+  const [count, setCount] = useState(0);
+  const [name, setName] = useState('');
+  const [isVisible, setIsVisible] = useState(false);
+  const [user, setUser] = useState({ firstName: '', lastName: '', age: 0 });
   const [items, setItems] = useState<string[]>([]);
   const [newItem, setNewItem] = useState('');
 
-  /**
-   * UPDATING STATE - Different Methods
-   */
+  // Exercise 1 & 4: edit todos
+  const [editIdx, setEditIdx] = useState<number | null>(null);
+  const [editTxt, setEditTxt] = useState('');
 
-  // Method 1: Direct value
-  const increment = () => {
-    setCount(count + 1); // Set new value directly
-  };
+  // Exercise 2: color
+  const [color, setColor] = useState('#ffffff');
 
-  // Method 2: Functional update (recommended when new state depends on previous)
-  const decrement = () => {
-    setCount(prevCount => prevCount - 1); // Use previous value
-  };
+  // Exercise 3: calculator
+  const [n1, setN1] = useState('');
+  const [n2, setN2] = useState('');
+  const [res, setRes] = useState<number | null>(null);
 
-  // Method 3: Multiple rapid updates (functional form ensures correct sequence)
-  const incrementByFive = () => {
-    // WRONG: All will use the same initial count value
-    // setCount(count + 1);
-    // setCount(count + 1);
-    // setCount(count + 1);
-
-    // CORRECT: Each uses the updated value
-    setCount(prev => prev + 1);
-    setCount(prev => prev + 1);
-    setCount(prev => prev + 1);
-    setCount(prev => prev + 1);
-    setCount(prev => prev + 1);
-  };
-
-  // Updating object state (must create new object!)
-  const updateUser = (field: string, value: string | number) => {
-    setUser(prevUser => ({
-      ...prevUser, // Spread previous values
-      [field]: value // Update specific field
-    }));
-  };
-
-  // Updating array state
+  // ====== Functions ======
   const addItem = () => {
-    if (newItem.trim()) {
-      setItems(prevItems => [...prevItems, newItem]); // Create new array with new item
-      setNewItem(''); // Clear input
+    if (newItem.trim()) { setItems(prev => [...prev, newItem]); setNewItem(''); }
+  };
+  const removeItem = (i: number) => setItems(prev => prev.filter((_, idx) => idx !== i));
+
+  // Exercise 1: remove all
+  const clearAll = () => setItems([]);
+
+  // Exercise 4: edit an item
+  const edit = (i: number) => { setEditIdx(i); setEditTxt(items[i]); };
+  const save = (i: number) => {
+    if (editTxt.trim()) {
+      setItems(prev => prev.map((item, idx) => (idx === i ? editTxt : item)));
+      setEditIdx(null); setEditTxt('');
     }
   };
 
-  const removeItem = (index: number) => {
-    setItems(prevItems => prevItems.filter((_, i) => i !== index)); // Create new array without item
+  // Exercise 3: math
+  const calc = (op: string) => {
+    const a = parseFloat(n1), b = parseFloat(n2);
+    if (isNaN(a) || isNaN(b)) return;
+    let r = 0;
+    if (op === '+') r = a + b;
+    else if (op === '-') r = a - b;
+    else if (op === '*') r = a * b;
+    else if (op === '/') r = b !== 0 ? a / b : NaN;
+    setRes(r);
   };
 
   return (
     <div className="space-y-6">
-      <div>
-        <h2 className="text-2xl font-bold mb-2">useState Hook</h2>
-        <p className="text-gray-600 mb-4">
-          The useState hook lets you add React state to function components. State causes re-renders when updated!
-        </p>
-      </div>
+      <h2 className="text-2xl font-bold">useState Demo</h2>
 
-      {/* Demo 1: Counter (Number State) */}
-      <div className="border rounded-lg p-4">
-        <h3 className="font-semibold mb-3">1. Counter (Number State)</h3>
-        <div className="flex items-center gap-4">
-          <button
-            onClick={decrement}
-            className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
-          >
-            - Decrement
-          </button>
-          <div className="text-3xl font-bold min-w-[100px] text-center">
-            {count}
-          </div>
-          <button
-            onClick={increment}
-            className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
-          >
-            + Increment
-          </button>
-          <button
-            onClick={incrementByFive}
-            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-          >
-            +5 (Functional Updates)
-          </button>
-          <button
-            onClick={() => setCount(0)}
-            className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
-          >
-            Reset
-          </button>
+      {/* 1. Counter */}
+      <div className="border p-4 rounded-lg"><h3 className="font-semibold mb-3">1. Counter</h3>
+        <div className="flex gap-2 items-center">
+          <button onClick={() => setCount(prev => prev - 1)} className="px-4 py-2 bg-red-500 text-white rounded">-</button>
+          <span className="text-3xl font-bold min-w-[60px] text-center">{count}</span>
+          <button onClick={() => setCount(count + 1)} className="px-4 py-2 bg-green-500 text-white rounded">+</button>
+          <button onClick={() => setCount(0)} className="px-4 py-2 bg-gray-400 text-white rounded">Reset</button>
         </div>
-        <p className="text-sm text-gray-600 mt-2">
-          💡 Current count value: {count}
-        </p>
       </div>
 
-      {/* Demo 2: Input Field (String State) */}
-      <div className="border rounded-lg p-4">
-        <h3 className="font-semibold mb-3">2. Text Input (String State)</h3>
-        <input
-          type="text"
-          value={name}
-          onChange={(e) => setName(e.target.value)} // Update state on every keystroke
-          placeholder="Type your name..."
-          className="w-full px-3 py-2 border rounded"
-        />
-        <p className="text-sm text-gray-600 mt-2">
-          💡 You typed: <strong>{name || '(nothing yet)'}</strong>
-        </p>
-        <p className="text-sm text-gray-600">
-          Character count: {name.length}
-        </p>
+      {/* 2. Text Input */}
+      <div className="border p-4 rounded-lg"><h3 className="font-semibold mb-3">2. Text Input</h3>
+        <input type="text" value={name} onChange={e => setName(e.target.value)} placeholder="Type here..." className="w-full px-3 py-2 border rounded" />
+        <p className="text-sm mt-1">You wrote: <b>{name || '(nothing)'}</b></p>
       </div>
 
-      {/* Demo 3: Toggle (Boolean State) */}
-      <div className="border rounded-lg p-4">
-        <h3 className="font-semibold mb-3">3. Toggle (Boolean State)</h3>
-        <button
-          onClick={() => setIsVisible(!isVisible)} // Toggle between true/false
-          className="px-4 py-2 bg-purple-500 text-white rounded hover:bg-purple-600"
-        >
-          {isVisible ? 'Hide' : 'Show'} Secret Message
-        </button>
-        {isVisible && ( // Conditional rendering based on state
-          <div className="mt-3 p-4 bg-purple-100 rounded">
-            🎉 This is a secret message! State value is: {isVisible.toString()}
+      {/* 3. Toggle */}
+      <div className="border p-4 rounded-lg"><h3 className="font-semibold mb-3">3. Toggle</h3>
+        <button onClick={() => setIsVisible(!isVisible)} className="px-4 py-2 bg-purple-500 text-white rounded">{isVisible ? 'Hide' : 'Show'}</button>
+        {isVisible && <div className="mt-2 p-3 bg-purple-100 rounded">🎉 Hello!</div>}
+      </div>
+
+      {/* 4. Object State */}
+      <div className="border p-4 rounded-lg"><h3 className="font-semibold mb-3">4. Object State</h3>
+        <div className="flex gap-2">
+          <input type="text" value={user.firstName} onChange={e => setUser(prev => ({ ...prev, firstName: e.target.value }))} placeholder="First" className="flex-1 px-3 py-2 border rounded" />
+          <input type="text" value={user.lastName} onChange={e => setUser(prev => ({ ...prev, lastName: e.target.value }))} placeholder="Last" className="flex-1 px-3 py-2 border rounded" />
+          <input type="number" value={user.age || ''} onChange={e => setUser(prev => ({ ...prev, age: parseInt(e.target.value) || 0 }))} placeholder="Age" className="w-20 px-3 py-2 border rounded" />
+        </div>
+        <pre className="mt-2 text-sm bg-gray-100 p-2 rounded">{JSON.stringify(user, null, 2)}</pre>
+      </div>
+
+      {/* ---- EXERCISES 1 & 4 ---- */}
+      {/* 5. Todo List with Clear All button + Edit each item */}
+      <div className="border p-4 rounded-lg"><h3 className="font-semibold mb-3">5. Todo List (Clear All + Edit)</h3>
+        <div className="flex gap-2 mb-2">
+          <input type="text" value={newItem} onChange={e => setNewItem(e.target.value)}
+            onKeyDown={e => e.key === 'Enter' && addItem()} placeholder="Add item..."
+            className="flex-1 px-3 py-2 border rounded" />
+          <button onClick={addItem} className="px-4 py-2 bg-blue-500 text-white rounded">Add</button>
+        </div>
+
+        {items.length === 0 ? <p className="text-gray-400 text-sm">No items</p> : (
+          <div className="space-y-1">
+            {items.map((item, i) => (
+              <div key={i} className="flex items-center justify-between bg-gray-50 p-2 rounded">
+                {editIdx === i ? (
+                  // Show input when editing
+                  <div className="flex-1 flex gap-1">
+                    <input type="text" value={editTxt} onChange={e => setEditTxt(e.target.value)}
+                      onKeyDown={e => e.key === 'Enter' && save(i)} autoFocus
+                      className="flex-1 px-2 py-1 border rounded text-sm" />
+                    <button onClick={() => save(i)} className="px-2 py-1 bg-green-500 text-white text-sm rounded">Save</button>
+                    <button onClick={() => { setEditIdx(null); setEditTxt(''); }} className="px-2 py-1 bg-gray-400 text-white text-sm rounded">X</button>
+                  </div>
+                ) : (
+                  // Normal view with Edit + Remove buttons
+                  <><span>{item}</span>
+                    <div className="flex gap-1">
+                      <button onClick={() => edit(i)} className="px-2 py-1 bg-yellow-500 text-white text-sm rounded">Edit</button>
+                      <button onClick={() => removeItem(i)} className="px-2 py-1 bg-red-500 text-white text-sm rounded">Remove</button>
+                    </div>
+                  </>
+                )}
+              </div>
+            ))}
           </div>
         )}
+
+        {/* Exercise 1: Clear all items at once */}
+        {items.length > 0 && <button onClick={clearAll} className="mt-2 px-4 py-2 bg-red-700 text-white text-sm rounded">Clear All ({items.length})</button>}
       </div>
 
-      {/* Demo 4: Form (Object State) */}
-      <div className="border rounded-lg p-4">
-        <h3 className="font-semibold mb-3">4. Form (Object State)</h3>
-        <div className="grid gap-3">
-          <input
-            type="text"
-            value={user.firstName}
-            onChange={(e) => updateUser('firstName', e.target.value)}
-            placeholder="First Name"
-            className="px-3 py-2 border rounded"
-          />
-          <input
-            type="text"
-            value={user.lastName}
-            onChange={(e) => updateUser('lastName', e.target.value)}
-            placeholder="Last Name"
-            className="px-3 py-2 border rounded"
-          />
-          <input
-            type="number"
-            value={user.age || ''}
-            onChange={(e) => updateUser('age', parseInt(e.target.value) || 0)}
-            placeholder="Age"
-            className="px-3 py-2 border rounded"
-          />
-        </div>
-        <div className="mt-3 p-3 bg-gray-100 rounded">
-          <strong>User Object State:</strong>
-          <pre className="text-sm mt-1">{JSON.stringify(user, null, 2)}</pre>
+      {/* ---- EXERCISE 2 ---- */}
+      {/* 6. Color Picker - background changes as you pick */}
+      <div className="border p-4 rounded-lg" style={{ backgroundColor: color }}>
+        <h3 className="font-semibold mb-3">6. Color Picker</h3>
+        <div className="flex items-center gap-3">
+          <input type="color" value={color} onChange={e => setColor(e.target.value)} className="w-12 h-10 cursor-pointer border rounded" />
+          <span className="text-sm font-mono bg-white/70 px-2 py-1 rounded">{color}</span>
         </div>
       </div>
 
-      {/* Demo 5: Todo List (Array State) */}
-      <div className="border rounded-lg p-4">
-        <h3 className="font-semibold mb-3">5. Todo List (Array State)</h3>
-        <div className="flex gap-2 mb-3">
-          <input
-            type="text"
-            value={newItem}
-            onChange={(e) => setNewItem(e.target.value)}
-            onKeyPress={(e) => e.key === 'Enter' && addItem()}
-            placeholder="Add new item..."
-            className="flex-1 px-3 py-2 border rounded"
-          />
-          <button
-            onClick={addItem}
-            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-          >
-            Add
-          </button>
+      {/* ---- EXERCISE 3 ---- */}
+      {/* 7. Simple Calculator */}
+      <div className="border p-4 rounded-lg"><h3 className="font-semibold mb-3">7. Calculator</h3>
+        <div className="flex flex-wrap items-end gap-2">
+          <input type="number" value={n1} onChange={e => setN1(e.target.value)} placeholder="0" className="w-20 px-3 py-2 border rounded" />
+          {['+', '-', '*', '/'].map(s => (
+            <button key={s} onClick={() => calc(s)} className="w-9 h-9 rounded font-bold bg-gray-200 hover:bg-gray-300">{s}</button>
+          ))}
+          <input type="number" value={n2} onChange={e => setN2(e.target.value)} placeholder="0" className="w-20 px-3 py-2 border rounded" />
+          <span className="text-2xl font-bold">=</span>
+          <span className="text-2xl font-bold text-blue-600 min-w-[50px]">{res !== null ? (isNaN(res) ? 'Error' : res) : '—'}</span>
         </div>
-        <div className="space-y-2">
-          {items.length === 0 ? (
-            <p className="text-gray-400 text-sm">No items yet. Add some above!</p>
-          ) : (
-            items.map((item, index) => (
-              <div key={index} className="flex items-center justify-between bg-gray-50 p-2 rounded">
-                <span>{item}</span>
-                <button
-                  onClick={() => removeItem(index)}
-                  className="px-3 py-1 bg-red-500 text-white text-sm rounded hover:bg-red-600"
-                >
-                  Remove
-                </button>
-              </div>
-            ))
-          )}
-        </div>
-        <p className="text-sm text-gray-600 mt-2">
-          💡 Total items: {items.length}
-        </p>
       </div>
 
-      {/* Important Notes */}
-      <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4">
-        <h3 className="font-bold mb-2">⚠️ Important Rules</h3>
-        <ul className="list-disc list-inside space-y-1 text-sm">
-          <li><strong>Never mutate state directly</strong> - Always use the setter function</li>
-          <li><strong>State updates are asynchronous</strong> - Don't rely on immediate updates</li>
-          <li><strong>Use functional updates</strong> - When new state depends on previous state</li>
-          <li><strong>Objects and arrays need new references</strong> - Use spread operator (...)</li>
-          <li><strong>State changes trigger re-renders</strong> - This is how React updates the UI</li>
-        </ul>
-      </div>
-
-      {/* Exercise */}
-      <div className="bg-blue-50 border-l-4 border-blue-400 p-4">
-        <h3 className="font-bold mb-2">🎯 Exercise for You</h3>
-        <ol className="list-decimal list-inside space-y-1 text-sm">
-          <li>Add a "Clear All" button to the todo list</li>
-          <li>Create a color picker that changes the background color</li>
-          <li>Build a simple calculator using useState</li>
-          <li>Add edit functionality to the todo list items</li>
-        </ol>
+      {/* Summary */}
+      <div className="bg-green-50 border-l-4 border-green-400 p-3 text-sm">
+        <b>✅ Exercises done:</b> ① Clear All (Demo 5) &nbsp; ② Color Picker (Demo 6) &nbsp; ③ Calculator (Demo 7) &nbsp; ④ Edit todos (Demo 5)
       </div>
     </div>
   );
