@@ -261,7 +261,7 @@ export function JavaScriptBasics() {
           <h3 className="font-semibold mb-2">1. Scope Demonstration</h3>
           <p className="text-sm text-gray-600 mb-3">
             var is function-scoped, while let and const are block-scoped.
-          </p>
+          </p>n
           <button
             onClick={demonstrateScope}
             className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
