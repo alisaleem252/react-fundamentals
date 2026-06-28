@@ -366,15 +366,12 @@ export function UseStateDemo() {
         </ul>
       </div>
 
-      {/* Exercise */}
-      <div className="bg-blue-50 border-l-4 border-blue-400 p-4">
-        <h3 className="font-bold mb-2">🎯 Exercise for You</h3>
-        <ol className="list-decimal list-inside space-y-1 text-sm">
-          <li>Add a "Clear All" button to the todo list</li>
-          <li>Create a color picker that changes the background color</li>
-          <li>Build a simple calculator using useState</li>
-          <li>Add edit functionality to the todo list items</li>
-        </ol>
+      {/* Exercise completed */}
+      <div className="bg-green-50 border-l-4 border-green-400 p-4">
+        <h3 className="font-bold mb-2">🎉 All Exercises Completed!</h3>
+        <p className="text-sm">
+          Both tasks are now implemented as interactive demos above.
+        </p>
       </div>
     </div>
   );
