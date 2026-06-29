@@ -158,7 +158,7 @@ export function JavaScriptBasics() {
     let score = 100;
     results.push(`let score = ${score}`);
     try {
-      // This will throw at runtime — eval ignores TS checks
+      // @ts-expect-error — we WANT this to fail at runtime
       eval('let score = 200');
     } catch (e) {
       if (e instanceof SyntaxError) {
@@ -170,7 +170,7 @@ export function JavaScriptBasics() {
     const name = 'Alice';
     results.push(`const name = '${name}'`);
     try {
-      // This will throw at runtime — eval ignores TS checks
+      // @ts-expect-error — we WANT this to fail at runtime
       eval('const name = "Bob"');
     } catch (e) {
       if (e instanceof SyntaxError) {
@@ -182,7 +182,7 @@ export function JavaScriptBasics() {
     const pi = 3.14;
     results.push(`const pi = ${pi}`);
     try {
-      // This will throw at runtime — eval ignores TS checks
+      // @ts-expect-error — we WANT this to fail at runtime
       eval('pi = 3.14159');
     } catch (e) {
       if (e instanceof TypeError) {
@@ -206,7 +206,6 @@ export function JavaScriptBasics() {
     const results: string[] = [];
 
     // VAR is hoisted (declared at the top of function, but undefined until assigned)
-    // @ts-expect-error — intentionally accessing before assignment to demonstrate hoisting
     results.push(`var before declaration: ${typeof varHoisted}`); // undefined
     var varHoisted = 'I am hoisted';
     results.push(`var after declaration: ${varHoisted}`);
@@ -219,10 +218,6 @@ export function JavaScriptBasics() {
 
     setOutput(results);
   };
-
-  // Demo 5: (duplicate removed)
-
-  // Demo 6: (duplicate removed)
 
   // Demo 4: Loop behavior with var vs let
   const demonstrateLoopVarLet = () => {

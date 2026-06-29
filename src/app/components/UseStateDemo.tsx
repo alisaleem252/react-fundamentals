@@ -15,6 +15,7 @@ import { useState } from 'react';
  */
 
 export function UseStateDemo() {
+ 
   // Example 1: Simple counter with number state
   const [count, setCount] = useState(0); // Initial value is 0
 
@@ -92,7 +93,8 @@ export function UseStateDemo() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6" style={{ backgroundColor: "pink" }}>
+  
       <div>
         <h2 className="text-2xl font-bold mb-2">useState Hook</h2>
         <p className="text-gray-600 mb-4">
@@ -319,7 +321,7 @@ export function UseStateDemo() {
                 if (op === '+') return calcNum1 + calcNum2;
                 if (op === '-') return calcNum1 - calcNum2;
                 if (op === '×') return calcNum1 * calcNum2;
-                if (op === '÷') return calcNum2 !== 0 ? calcNum1 / calcNum2 : NaN;
+                if (op === '÷') return (calcNum2 !== 0) ? (calcNum1 / calcNum2 ): NaN;
               };
               return (
                 <button
