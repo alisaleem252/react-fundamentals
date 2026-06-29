@@ -34,6 +34,17 @@ export function UseStateDemo() {
   // Example 5: Array state
   const [items, setItems] = useState<string[]>([]);
   const [newItem, setNewItem] = useState('');
+  const [editingIndex, setEditingIndex] = useState<number | null>(null);
+  const [editingValue, setEditingValue] = useState('');
+
+  // Example 6: Color picker state
+  const [backgroundColor, setBackgroundColor] = useState('#ffffff');
+
+  // Example 7: Calculator state
+  const [firstNumber, setFirstNumber] = useState('0');
+  const [secondNumber, setSecondNumber] = useState('0');
+  const [operation, setOperation] = useState('+');
+  const [result, setResult] = useState<number | null>(null);
 
   /**
    * UPDATING STATE - Different Methods
@@ -84,8 +95,72 @@ export function UseStateDemo() {
     setItems(prevItems => prevItems.filter((_, i) => i !== index)); // Create new array without item
   };
 
+  const clearItems = () => {
+    setItems([]);
+  };
+
+  const startEditing = (index: number, item: string) => {
+    setEditingIndex(index);
+    setEditingValue(item);
+  };
+
+  const saveEdit = (index: number) => {
+    const trimmedValue = editingValue.trim();
+
+    if (trimmedValue) {
+      setItems(prevItems => prevItems.map((item, i) => (i === index ? trimmedValue : item)));
+    } else {
+      removeItem(index);
+    }
+
+    setEditingIndex(null);
+    setEditingValue('');
+  };
+
+  const cancelEdit = () => {
+    setEditingIndex(null);
+    setEditingValue('');
+  };
+
+  const calculateResult = () => {
+    const first = Number(firstNumber);
+    const second = Number(secondNumber);
+
+    if (Number.isNaN(first) || Number.isNaN(second)) {
+      setResult(null);
+      return;
+    }
+
+    switch (operation) {
+      case '+':
+        setResult(first + second);
+        break;
+      case '-':
+        setResult(first - second);
+        break;
+      case '*':
+        setResult(first * second);
+        break;
+      case '/':
+        setResult(second === 0 ? null : first / second);
+        break;
+      default:
+        setResult(null);
+    }
+  };
+
+  const resetCalculator = () => {
+    setFirstNumber('0');
+    setSecondNumber('0');
+    setOperation('+');
+    setResult(null);
+  };
+
   return (
-    <div className="space-y-6">
+    <div
+      className="space-y-6 p-4 rounded-lg transition-colors duration-200"
+      style={{ backgroundColor }}
+    >
       <div>
         <h2 className="text-2xl font-bold mb-2">useState Hook</h2>
         <p className="text-gray-600 mb-4">
@@ -197,7 +272,7 @@ export function UseStateDemo() {
       </div>
 
       {/* Demo 5: Todo List (Array State) */}
-      <div className="border rounded-lg p-4">
+      <div className="border rounded-lg p-4 bg-white/80 backdrop-blur-sm">
         <h3 className="font-semibold mb-3">5. Todo List (Array State)</h3>
         <div className="flex gap-2 mb-3">
           <input
@@ -214,26 +289,138 @@ export function UseStateDemo() {
           >
             Add
           </button>
+          <button
+            onClick={clearItems}
+            className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
+          >
+            Clear All
+          </button>
         </div>
         <div className="space-y-2">
           {items.length === 0 ? (
             <p className="text-gray-400 text-sm">No items yet. Add some above!</p>
           ) : (
             items.map((item, index) => (
-              <div key={index} className="flex items-center justify-between bg-gray-50 p-2 rounded">
-                <span>{item}</span>
-                <button
-                  onClick={() => removeItem(index)}
-                  className="px-3 py-1 bg-red-500 text-white text-sm rounded hover:bg-red-600"
-                >
-                  Remove
-                </button>
+              <div key={index} className="flex items-center justify-between gap-2 bg-gray-50 p-2 rounded">
+                {editingIndex === index ? (
+                  <>
+                    <input
+                      type="text"
+                      value={editingValue}
+                      onChange={(e) => setEditingValue(e.target.value)}
+                      onKeyDown={(e) => e.key === 'Enter' && saveEdit(index)}
+                      className="flex-1 px-2 py-1 border rounded"
+                      autoFocus
+                    />
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => saveEdit(index)}
+                        className="px-3 py-1 bg-green-500 text-white text-sm rounded hover:bg-green-600"
+                      >
+                        Save
+                      </button>
+                      <button
+                        onClick={cancelEdit}
+                        className="px-3 py-1 bg-gray-500 text-white text-sm rounded hover:bg-gray-600"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <span>{item}</span>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => startEditing(index, item)}
+                        className="px-3 py-1 bg-yellow-500 text-white text-sm rounded hover:bg-yellow-600"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => removeItem(index)}
+                        className="px-3 py-1 bg-red-500 text-white text-sm rounded hover:bg-red-600"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  </>
+                )}
               </div>
             ))
           )}
         </div>
         <p className="text-sm text-gray-600 mt-2">
           💡 Total items: {items.length}
+        </p>
+      </div>
+
+      {/* Demo 6: Color Picker (String State) */}
+      <div className="border rounded-lg p-4 bg-white/80 backdrop-blur-sm">
+        <h3 className="font-semibold mb-3">6. Color Picker (String State)</h3>
+        <div className="flex items-center gap-3">
+          <input
+            type="color"
+            value={backgroundColor}
+            onChange={(e) => setBackgroundColor(e.target.value)}
+            className="h-10 w-16 cursor-pointer"
+          />
+          <input
+            type="text"
+            value={backgroundColor}
+            onChange={(e) => setBackgroundColor(e.target.value)}
+            placeholder="#ffffff"
+            className="px-3 py-2 border rounded"
+          />
+        </div>
+        <p className="text-sm text-gray-600 mt-2">
+          💡 Current background color: <strong>{backgroundColor}</strong>
+        </p>
+      </div>
+
+      {/* Demo 7: Calculator (State + Event Handling) */}
+      <div className="border rounded-lg p-4 bg-white/80 backdrop-blur-sm">
+        <h3 className="font-semibold mb-3">7. Calculator (useState)</h3>
+        <div className="grid gap-3 md:grid-cols-[1fr_auto_1fr] items-center">
+          <input
+            type="number"
+            value={firstNumber}
+            onChange={(e) => setFirstNumber(e.target.value)}
+            className="px-3 py-2 border rounded"
+          />
+          <select
+            value={operation}
+            onChange={(e) => setOperation(e.target.value)}
+            className="px-3 py-2 border rounded"
+          >
+            <option value="+">+</option>
+            <option value="-">-</option>
+            <option value="*">×</option>
+            <option value="/">÷</option>
+          </select>
+          <input
+            type="number"
+            value={secondNumber}
+            onChange={(e) => setSecondNumber(e.target.value)}
+            className="px-3 py-2 border rounded"
+          />
+        </div>
+        <div className="flex gap-2 mt-3">
+          <button
+            onClick={calculateResult}
+            className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+          >
+            Calculate
+          </button>
+          <button
+            onClick={resetCalculator}
+            className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
+          >
+            Reset
+          </button>
+        </div>
+        <p className="text-sm text-gray-600 mt-3">
+          💡 Result: <strong>{result ?? '—'}</strong>
         </p>
       </div>
 
