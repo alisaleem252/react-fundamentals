@@ -35,6 +35,15 @@ export function UseStateDemo() {
   const [items, setItems] = useState<string[]>([]);
   const [newItem, setNewItem] = useState('');
 
+  // Example 6: Color picker (string state for background color)
+  const [bgColor, setBgColor] = useState('#87CEEB');
+
+  // Example 7: Calculator (multiple number & string states)
+  const [calcDisplay, setCalcDisplay] = useState('0');
+  const [calcFirstValue, setCalcFirstValue] = useState<number | null>(null);
+  const [calcOperator, setCalcOperator] = useState<string | null>(null);
+  const [calcWaiting, setCalcWaiting] = useState(false);
+
   /**
    * UPDATING STATE - Different Methods
    */
@@ -57,11 +66,12 @@ export function UseStateDemo() {
     // setCount(count + 1);
 
     // CORRECT: Each uses the updated value
-    setCount(prev => prev + 1);
-    setCount(prev => prev + 1);
-    setCount(prev => prev + 1);
-    setCount(prev => prev + 1);
-    setCount(prev => prev + 1);
+    // setCount(prev => prev + 1);
+    // setCount(prev => prev + 1);
+    // setCount(prev => prev + 1);
+    // setCount(prev => prev + 1);
+    // setCount(prev => prev + 1);
+    setCount(prev => prev + 5); // Simpler way to increment by 5
   };
 
   // Updating object state (must create new object!)
@@ -82,6 +92,95 @@ export function UseStateDemo() {
 
   const removeItem = (index: number) => {
     setItems(prevItems => prevItems.filter((_, i) => i !== index)); // Create new array without item
+  };
+
+  const clearAllItems = () => {
+    setItems([]); // Reset array to empty
+  };
+
+  // Edit functionality for todo list
+  const [editingIndex, setEditingIndex] = useState<number | null>(null);
+  const [editText, setEditText] = useState('');
+
+  const startEdit = (index: number) => {
+    setEditingIndex(index);
+    setEditText(items[index]);
+  };
+
+  const saveEdit = (index: number) => {
+    if (editText.trim()) {
+      setItems(prevItems =>
+        prevItems.map((item, i) => (i === index ? editText : item))
+      );
+    }
+    setEditingIndex(null);
+    setEditText('');
+  };
+
+  const cancelEdit = () => {
+    setEditingIndex(null);
+    setEditText('');
+  };
+
+  // Calculator functions
+  const inputDigit = (digit: string) => {
+    if (calcWaiting) {
+      setCalcDisplay(digit);
+      setCalcWaiting(false);
+    } else {
+      setCalcDisplay(prev => prev === '0' ? digit : prev + digit);
+    }
+  };
+
+  const inputDecimal = () => {
+    if (calcWaiting) {
+      setCalcDisplay('0.');
+      setCalcWaiting(false);
+      return;
+    }
+    if (!calcDisplay.includes('.')) {
+      setCalcDisplay(prev => prev + '.');
+    }
+  };
+
+  const performOperation = (op: string) => {
+    const current = parseFloat(calcDisplay);
+    if (calcFirstValue === null) {
+      setCalcFirstValue(current);
+    } else if (calcOperator) {
+      const result = calculate(calcFirstValue, current, calcOperator);
+      setCalcDisplay(String(result));
+      setCalcFirstValue(result);
+    }
+    setCalcOperator(op);
+    setCalcWaiting(true);
+  };
+
+  const calculate = (a: number, b: number, op: string): number => {
+    switch (op) {
+      case '+': return a + b;
+      case '-': return a - b;
+      case '*': return a * b;
+      case '/': return b !== 0 ? a / b : 0;
+      default: return b;
+    }
+  };
+
+  const calculateResult = () => {
+    if (calcFirstValue === null || calcOperator === null) return;
+    const current = parseFloat(calcDisplay);
+    const result = calculate(calcFirstValue, current, calcOperator);
+    setCalcDisplay(String(result));
+    setCalcFirstValue(null);
+    setCalcOperator(null);
+    setCalcWaiting(true);
+  };
+
+  const clearCalc = () => {
+    setCalcDisplay('0');
+    setCalcFirstValue(null);
+    setCalcOperator(null);
+    setCalcWaiting(false);
   };
 
   return (
@@ -148,20 +247,30 @@ export function UseStateDemo() {
         </p>
       </div>
 
-      {/* Demo 3: Toggle (Boolean State) */}
-      <div className="border rounded-lg p-4">
-        <h3 className="font-semibold mb-3">3. Toggle (Boolean State)</h3>
-        <button
-          onClick={() => setIsVisible(!isVisible)} // Toggle between true/false
-          className="px-4 py-2 bg-purple-500 text-white rounded hover:bg-purple-600"
-        >
-          {isVisible ? 'Hide' : 'Show'} Secret Message
-        </button>
-        {isVisible && ( // Conditional rendering based on state
-          <div className="mt-3 p-4 bg-purple-100 rounded">
-            🎉 This is a secret message! State value is: {isVisible.toString()}
+      {/* Demo 3: Toggle (Boolean State) - Bulb ON/OFF */}
+      <div className={`border rounded-lg p-4 transition-colors duration-300 ${isVisible ? 'bg-yellow-50 border-yellow-300' : ''}`}>
+        <h3 className="font-semibold mb-3">3. Toggle (Boolean State) - 💡 Bulb Example</h3>
+        <div className="flex flex-col items-center gap-4">
+          <div
+            className="text-6xl transition-all duration-300 cursor-pointer"
+            onClick={() => setIsVisible(!isVisible)}
+          >
+            {isVisible ? '💡' : '⚫'}
           </div>
-        )}
+          <button
+            onClick={() => setIsVisible(!isVisible)}
+            className={`px-6 py-2 rounded text-white font-bold transition-all duration-300 ${isVisible
+              ? 'bg-yellow-500 hover:bg-yellow-600 shadow-lg'
+              : 'bg-gray-700 hover:bg-gray-800'
+              }`}
+          >
+            {isVisible ? '🔌 Turn OFF' : '🔌 Turn ON'}
+          </button>
+          <p className="text-sm text-gray-600">
+            Bulb is currently: <strong>{isVisible ? 'ON 💡' : 'OFF ⚫'}</strong>
+            &nbsp;| State value: <code>{isVisible.toString()}</code>
+          </p>
+        </div>
       </div>
 
       {/* Demo 4: Form (Object State) */}
@@ -214,6 +323,14 @@ export function UseStateDemo() {
           >
             Add
           </button>
+          {items.length > 0 && (
+            <button
+              onClick={clearAllItems}
+              className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+            >
+              Clear All
+            </button>
+          )}
         </div>
         <div className="space-y-2">
           {items.length === 0 ? (
@@ -221,19 +338,118 @@ export function UseStateDemo() {
           ) : (
             items.map((item, index) => (
               <div key={index} className="flex items-center justify-between bg-gray-50 p-2 rounded">
-                <span>{item}</span>
-                <button
-                  onClick={() => removeItem(index)}
-                  className="px-3 py-1 bg-red-500 text-white text-sm rounded hover:bg-red-600"
-                >
-                  Remove
-                </button>
+                {editingIndex === index ? (
+                  <div className="flex items-center gap-2 flex-1">
+                    <input
+                      type="text"
+                      value={editText}
+                      onChange={(e) => setEditText(e.target.value)}
+                      onKeyPress={(e) => e.key === 'Enter' && saveEdit(index)}
+                      className="flex-1 px-2 py-1 border rounded text-sm"
+                      autoFocus
+                    />
+                    <button
+                      onClick={() => saveEdit(index)}
+                      className="px-3 py-1 bg-green-500 text-white text-sm rounded hover:bg-green-600"
+                    >
+                      Save
+                    </button>
+                    <button
+                      onClick={cancelEdit}
+                      className="px-3 py-1 bg-gray-500 text-white text-sm rounded hover:bg-gray-600"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                ) : (
+                  <>
+                    <span className="flex-1">{item}</span>
+                    <div className="flex gap-1">
+                      <button
+                        onClick={() => startEdit(index)}
+                        className="px-3 py-1 bg-yellow-500 text-white text-sm rounded hover:bg-yellow-600"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => removeItem(index)}
+                        className="px-3 py-1 bg-red-500 text-white text-sm rounded hover:bg-red-600"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  </>
+                )}
               </div>
             ))
           )}
         </div>
         <p className="text-sm text-gray-600 mt-2">
           💡 Total items: {items.length}
+        </p>
+      </div>
+
+      {/* Demo 6: Color Picker (String State for Background) */}
+      <div className="border rounded-lg p-4" style={{ backgroundColor: bgColor }}>
+        <h3 className="font-semibold mb-3">6. Color Picker (Background Color)</h3>
+        <div className="flex items-center gap-4">
+          <input
+            type="color"
+            value={bgColor}
+            onChange={(e) => setBgColor(e.target.value)}
+            className="w-12 h-12 cursor-pointer border rounded"
+          />
+          <div className="flex-1">
+            <p className="text-sm font-mono">Selected color: <strong>{bgColor}</strong></p>
+            <p className="text-sm">Pick a color above to change this section's background!</p>
+          </div>
+          <button
+            onClick={() => setBgColor('#ffffff')}
+            className="px-3 py-1 bg-gray-500 text-white text-sm rounded hover:bg-gray-600"
+          >
+            Reset
+          </button>
+        </div>
+      </div>
+
+      {/* Demo 7: Calculator (Multiple States) */}
+      <div className="border rounded-lg p-4">
+        <h3 className="font-semibold mb-3">7. Simple Calculator (Multiple States)</h3>
+        <div className="max-w-xs mx-auto">
+          {/* Display */}
+          <div className="bg-gray-900 text-white text-right text-3xl font-mono p-4 rounded mb-3 overflow-hidden">
+            {calcFirstValue !== null && (
+              <span className="text-gray-400 text-sm mr-2">{calcFirstValue} {calcOperator}</span>
+            )}
+            {calcDisplay}
+          </div>
+          {/* Keypad */}
+          <div className="grid grid-cols-4 gap-2">
+            <button onClick={() => inputDigit('7')} className="p-3 bg-gray-200 rounded text-xl hover:bg-gray-300">7</button>
+            <button onClick={() => inputDigit('8')} className="p-3 bg-gray-200 rounded text-xl hover:bg-gray-300">8</button>
+            <button onClick={() => inputDigit('9')} className="p-3 bg-gray-200 rounded text-xl hover:bg-gray-300">9</button>
+            <button onClick={() => performOperation('/')} className="p-3 bg-blue-500 text-white rounded text-xl hover:bg-blue-600">÷</button>
+
+            <button onClick={() => inputDigit('4')} className="p-3 bg-gray-200 rounded text-xl hover:bg-gray-300">4</button>
+            <button onClick={() => inputDigit('5')} className="p-3 bg-gray-200 rounded text-xl hover:bg-gray-300">5</button>
+            <button onClick={() => inputDigit('6')} className="p-3 bg-gray-200 rounded text-xl hover:bg-gray-300">6</button>
+            <button onClick={() => performOperation('*')} className="p-3 bg-blue-500 text-white rounded text-xl hover:bg-blue-600">×</button>
+
+            <button onClick={() => inputDigit('1')} className="p-3 bg-gray-200 rounded text-xl hover:bg-gray-300">1</button>
+            <button onClick={() => inputDigit('2')} className="p-3 bg-gray-200 rounded text-xl hover:bg-gray-300">2</button>
+            <button onClick={() => inputDigit('3')} className="p-3 bg-gray-200 rounded text-xl hover:bg-gray-300">3</button>
+            <button onClick={() => performOperation('-')} className="p-3 bg-blue-500 text-white rounded text-xl hover:bg-blue-600">−</button>
+
+            <button onClick={() => inputDigit('0')} className="p-3 bg-gray-200 rounded text-xl hover:bg-gray-300">0</button>
+            <button onClick={inputDecimal} className="p-3 bg-gray-200 rounded text-xl hover:bg-gray-300">.</button>
+            <button onClick={clearCalc} className="p-3 bg-red-500 text-white rounded text-xl hover:bg-red-600">C</button>
+            <button onClick={() => performOperation('+')} className="p-3 bg-blue-500 text-white rounded text-xl hover:bg-blue-600">+</button>
+
+            <button onClick={calculateResult} className="col-span-4 p-3 bg-green-500 text-white rounded text-xl hover:bg-green-600">=</button>
+          </div>
+        </div>
+        <p className="text-sm text-gray-600 mt-2">
+          💡 Uses 4 state variables: display, firstValue, operator, and waiting flag
         </p>
       </div>
 
@@ -253,10 +469,10 @@ export function UseStateDemo() {
       <div className="bg-blue-50 border-l-4 border-blue-400 p-4">
         <h3 className="font-bold mb-2">🎯 Exercise for You</h3>
         <ol className="list-decimal list-inside space-y-1 text-sm">
-          <li>Add a "Clear All" button to the todo list</li>
-          <li>Create a color picker that changes the background color</li>
-          <li>Build a simple calculator using useState</li>
-          <li>Add edit functionality to the todo list items</li>
+          <li>✅ Add a "Clear All" button to the todo list</li>
+          <li>✅ Create a color picker that changes the background color</li>
+          <li>✅ Build a simple calculator using useState</li>
+          <li>✅ Add edit functionality to the todo list items</li>
         </ol>
       </div>
     </div>
