@@ -13,7 +13,7 @@ import { useState, useEffect } from 'react';
  * - Return value: Optional cleanup function
  *
  * DEPENDENCY ARRAY BEHAVIOR:
- * - [] (empty): Effect runs once after initial render (like componentDidMount)
+ * - [] (empty): Effect runs onMce after initial render (like componentDidMount)
  * - [dep1, dep2]: Effect runs when any dependency changes
  * - No array: Effect runs after every render (use carefully!)
  */
