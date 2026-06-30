@@ -180,7 +180,7 @@ setName('Bob');    // → SKIPPED! Same value as current → no re-render
 
 // React batches synchronous updates in event handlers:
 const handleClick = () => {
-  setName('Alice');  // batched  
+  setName('Alice');  // rerender  
   setName('Alice');  // batched
   setAge(30);        // batched
   // Only ONE re-render happens with both updates applied!
