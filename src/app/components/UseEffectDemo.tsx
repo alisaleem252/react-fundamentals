@@ -38,6 +38,15 @@ export function UseEffectDemo() {
   // Demo 5: Window resize listener
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
+  // Exercise 2: Time since page load
+  const [timeSinceLoad, setTimeSinceLoad] = useState(0);
+
+  // Exercise 3: Mouse position tracker
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+
+  // Exercise 4: localStorage sync
+  const [savedName, setSavedName] = useState('');
+
   /**
    * EFFECT 1: Runs ONCE when component mounts
    * Empty dependency array [] means "run only on mount"
@@ -67,6 +76,63 @@ export function UseEffectDemo() {
 
     // This runs on mount AND whenever count changes
   }, [count]); // Effect depends on count
+
+  /**
+   * EFFECT 2.5: Document title updater
+   * Updates browser tab title to show current count
+   * excercie 1
+   */
+  useEffect(() => {
+    document.title = `Count: ${count}`;
+  }, [count]);
+
+  /**
+   * EFFECT 2.6: Time since page load counter
+   * Exercise 2: Shows how many seconds passed since component mounted
+   */
+  useEffect(() => {
+    const startTime = Date.now();
+    const interval = setInterval(() => {
+      setTimeSinceLoad(Math.floor((Date.now() - startTime) / 1000));
+    }, 1000);
+
+    // Cleanup: clear interval on unmount
+    return () => clearInterval(interval);
+  }, []);
+
+  /**
+   * EFFECT 2.7: Mouse position tracker
+   * Exercise 3: Tracks mouse position using mousemove event
+   */
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      setMousePos({ x: e.clientX, y: e.clientY });
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+
+    // Cleanup: remove listener on unmount
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, []);
+
+  /**
+   * EFFECT 2.8: Load from localStorage (on mount)
+   * Exercise 4: Load saved name from localStorage when component mounts
+   */
+  useEffect(() => {
+    const stored = localStorage.getItem('savedName');
+    if (stored) {
+      setSavedName(stored);
+    }
+  }, []);
+
+  /**
+   * EFFECT 2.9: Save to localStorage (when savedName changes)
+   * Exercise 4: Auto-save name to localStorage whenever it changes
+   */
+  useEffect(() => {
+    localStorage.setItem('savedName', savedName);
+  }, [savedName]);
 
   /**
    * EFFECT 3: Timer with CLEANUP
@@ -162,6 +228,69 @@ export function UseEffectDemo() {
         </div>
       </div>
 
+      {/* Exercise 2: Time Since Page Load */}
+      <div className="border rounded-lg p-4">
+        <h3 className="font-semibold mb-3">🎯 Ex 2: Time Since Page Load</h3>
+        <div className="bg-teal-50 p-3 rounded">
+          <p className="text-lg font-bold">{timeSinceLoad} seconds</p>
+          <p className="text-xs text-gray-600 mt-1">Page loaded {timeSinceLoad} seconds ago</p>
+          <code className="text-xs block mt-2 bg-white p-2 rounded">
+            useEffect(() =&gt; &#123;<br />
+            &nbsp;&nbsp;const startTime = Date.now();<br />
+            &nbsp;&nbsp;setInterval(() =&gt; setTimeSinceLoad(...), 1000);<br />
+            &nbsp;&nbsp;return () =&gt; clearInterval(interval);<br />
+            &#125;, [])
+          </code>
+        </div>
+      </div>
+
+      {/* Exercise 3: Mouse Position Tracker */}
+      <div className="border rounded-lg p-4">
+        <h3 className="font-semibold mb-3">🎯 Ex 3: Mouse Position Tracker</h3>
+        <div className="bg-orange-50 p-3 rounded">
+          <p className="text-lg font-bold">
+            X: {mousePos.x} , Y: {mousePos.y}
+          </p>
+          <p className="text-xs text-gray-600 mt-1">Move your mouse anywhere on the page!</p>
+          <code className="text-xs block mt-2 bg-white p-2 rounded">
+            useEffect(() =&gt; &#123;<br />
+            &nbsp;&nbsp;window.addEventListener('mousemove', handler);<br />
+            &nbsp;&nbsp;return () =&gt; window.removeEventListener('mousemove', handler);<br />
+            &#125;, [])
+          </code>
+        </div>
+      </div>
+
+      {/* Exercise 4: localStorage Sync */}
+      <div className="border rounded-lg p-4">
+        <h3 className="font-semibold mb-3">🎯 Ex 4: localStorage Sync</h3>
+        <div className="bg-pink-50 p-3 rounded">
+          <input
+            type="text"
+            placeholder="Type something..."
+            value={savedName}
+            onChange={(e) => setSavedName(e.target.value)}
+            className="w-full px-3 py-2 border rounded mb-2"
+          />
+          <p className="text-sm text-gray-600">
+            Saved in localStorage: <strong>"{savedName}"</strong>
+          </p>
+          <p className="text-xs text-gray-500 mt-1">Refresh page — data will persist!</p>
+          <code className="text-xs block mt-2 bg-white p-2 rounded">
+            useEffect(() =&gt; &#123;<br />
+            &nbsp;&nbsp;// Load on mount<br />
+            &nbsp;&nbsp;const stored = localStorage.getItem('savedName');<br />
+            &nbsp;&nbsp;if (stored) setSavedName(stored);<br />
+            &#125;, [])<br />
+            <br />
+            useEffect(() =&gt; &#123;<br />
+            &nbsp;&nbsp;// Save on change<br />
+            &nbsp;&nbsp;localStorage.setItem('savedName', savedName);<br />
+            &#125;, [savedName])
+          </code>
+        </div>
+      </div>
+
       {/* Demo 2: Run When Dependency Changes */}
       <div className="border rounded-lg p-4">
         <h3 className="font-semibold mb-3">2. Run When Dependency Changes</h3>
@@ -196,9 +325,8 @@ export function UseEffectDemo() {
         <div className="flex gap-2 items-center mb-3">
           <button
             onClick={() => setIsTimerRunning(!isTimerRunning)}
-            className={`px-4 py-2 rounded text-white ${
-              isTimerRunning ? 'bg-red-500 hover:bg-red-600' : 'bg-green-500 hover:bg-green-600'
-            }`}
+            className={`px-4 py-2 rounded text-white ${isTimerRunning ? 'bg-red-500 hover:bg-red-600' : 'bg-green-500 hover:bg-green-600'
+              }`}
           >
             {isTimerRunning ? 'Stop' : 'Start'} Timer
           </button>
@@ -215,9 +343,9 @@ export function UseEffectDemo() {
         <div className="bg-purple-50 p-3 rounded">
           <p className="text-sm">Status: {isTimerRunning ? '⏱️ Running' : '⏸️ Stopped'}</p>
           <code className="text-xs block mt-2 bg-white p-2 rounded">
-            useEffect(() =&gt; &#123;<br/>
-            &nbsp;&nbsp;const interval = setInterval(...);<br/>
-            &nbsp;&nbsp;return () =&gt; clearInterval(interval);<br/>
+            useEffect(() =&gt; &#123;<br />
+            &nbsp;&nbsp;const interval = setInterval(...);<br />
+            &nbsp;&nbsp;return () =&gt; clearInterval(interval);<br />
             &#125;, [isTimerRunning])
           </code>
         </div>
@@ -264,9 +392,9 @@ export function UseEffectDemo() {
           <p className="text-sm">Current window width: <strong>{windowWidth}px</strong></p>
           <p className="text-xs text-gray-600 mt-2">Try resizing your browser window!</p>
           <code className="text-xs block mt-2 bg-white p-2 rounded">
-            useEffect(() =&gt; &#123;<br/>
-            &nbsp;&nbsp;window.addEventListener('resize', handler);<br/>
-            &nbsp;&nbsp;return () =&gt; window.removeEventListener('resize', handler);<br/>
+            useEffect(() =&gt; &#123;<br />
+            &nbsp;&nbsp;window.addEventListener('resize', handler);<br />
+            &nbsp;&nbsp;return () =&gt; window.removeEventListener('resize', handler);<br />
             &#125;, [])
           </code>
         </div>
@@ -288,10 +416,10 @@ export function UseEffectDemo() {
       <div className="bg-blue-50 border-l-4 border-blue-400 p-4">
         <h3 className="font-bold mb-2">🎯 Exercise for You</h3>
         <ol className="list-decimal list-inside space-y-1 text-sm">
-          <li>Create a document title updater that shows the current count in browser tab</li>
-          <li>Build a "time since page load" counter</li>
-          <li>Add a mouse position tracker using mousemove event</li>
-          <li>Create a localStorage sync effect that saves/loads data</li>
+          <li>✅ Create a document title updater that shows the current count in browser tab</li>
+          <li>✅ Build a "time since page load" counter</li>
+          <li>✅ Add a mouse position tracker using mousemove event</li>
+          <li>✅ Create a localStorage sync effect that saves/loads data</li>
         </ol>
       </div>
     </div>
