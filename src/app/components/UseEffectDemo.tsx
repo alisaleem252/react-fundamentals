@@ -38,6 +38,23 @@ export function UseEffectDemo() {
   // Demo 5: Window resize listener
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
+  // Exercise 1: Document title updater
+  const [titleUpdates, setTitleUpdates] = useState(true);
+
+  // Exercise 2: Time since page load
+  const [pageLoadTime] = useState(Date.now());
+  const [timeSinceLoad, setTimeSinceLoad] = useState('0s');
+
+  // Exercise 3: Mouse position tracker
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+
+  // Exercise 4: localStorage sync
+  const STORAGE_KEY = 'react-demo-count';
+  const [savedCount, setSavedCount] = useState(() => {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    return saved ? JSON.parse(saved) : 0;
+  });
+
   /**
    * EFFECT 1: Runs ONCE when component mounts
    * Empty dependency array [] means "run only on mount"
@@ -74,7 +91,7 @@ export function UseEffectDemo() {
    * or when dependencies change
    */
   useEffect(() => {
-    let interval: NodeJS.Timeout | null = null;
+    let interval: ReturnType<typeof setInterval> | null = null;
 
     if (isTimerRunning) {
       console.log('Timer started');
@@ -140,6 +157,66 @@ export function UseEffectDemo() {
       window.removeEventListener('resize', handleResize);
     };
   }, []); // Empty array = add listener once
+
+  /**
+   * EXERCISE 1: Document title updater
+   * Updates the browser tab title to show the current count
+   */
+  useEffect(() => {
+    if (titleUpdates) {
+      document.title = `Count: ${count} | React Fundamentals`;
+    }
+
+    // Cleanup: Reset title when component unmounts or titleUpdates toggles off
+    return () => {
+      document.title = 'React Fundamentals';
+    };
+  }, [count, titleUpdates]);
+
+  /**
+   * EXERCISE 2: Time since page load
+   * Shows how long the component has been mounted
+   */
+  useEffect(() => {
+    const timer = setInterval(() => {
+      const elapsed = Date.now() - pageLoadTime;
+      const seconds = Math.floor(elapsed / 1000);
+      const minutes = Math.floor(seconds / 60);
+      const hours = Math.floor(minutes / 60);
+
+      if (hours > 0) {
+        setTimeSinceLoad(`${hours}h ${minutes % 60}m ${seconds % 60}s`);
+      } else if (minutes > 0) {
+        setTimeSinceLoad(`${minutes}m ${seconds % 60}s`);
+      } else {
+        setTimeSinceLoad(`${seconds}s`);
+      }
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [pageLoadTime]);
+
+  /**
+   * EXERCISE 3: Mouse position tracker
+   * Tracks mouse position anywhere on the page
+   */
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      setMousePos({ x: e.clientX, y: e.clientY });
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, []);
+
+  /**
+   * EXERCISE 4: localStorage sync
+   * Saves count to localStorage whenever it changes
+   */
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(savedCount));
+    console.log('Saved count to localStorage:', savedCount);
+  }, [savedCount]);
 
   return (
     <div className="space-y-6">
@@ -272,6 +349,82 @@ export function UseEffectDemo() {
         </div>
       </div>
 
+      {/* Exercise 1: Document Title Updater */}
+      <div className="border rounded-lg p-4">
+        <h3 className="font-semibold mb-3">🎯 Exercise 1: Document Title Updater</h3>
+        <div className="flex items-center gap-3 mb-2">
+          <label className="flex items-center gap-2 text-sm cursor-pointer">
+            <input
+              type="checkbox"
+              checked={titleUpdates}
+              onChange={() => setTitleUpdates(!titleUpdates)}
+              className="w-4 h-4"
+            />
+            Update tab title with current count
+          </label>
+        </div>
+        <div className="bg-orange-50 p-3 rounded">
+          <p className="text-xs text-gray-600">Check your browser tab — the title changes to "Count: {count}" whenever the counter above changes!</p>
+        </div>
+      </div>
+
+      {/* Exercise 2: Time Since Page Load */}
+      <div className="border rounded-lg p-4">
+        <h3 className="font-semibold mb-3">🎯 Exercise 2: Time Since Page Load</h3>
+        <div className="bg-cyan-50 p-3 rounded">
+          <p className="text-2xl font-mono font-bold text-center">{timeSinceLoad}</p>
+          <p className="text-xs text-gray-600 mt-2 text-center">Time elapsed since this component was mounted</p>
+        </div>
+      </div>
+
+      {/* Exercise 3: Mouse Position Tracker */}
+      <div className="border rounded-lg p-4">
+        <h3 className="font-semibold mb-3">🎯 Exercise 3: Mouse Position Tracker</h3>
+        <div className="bg-rose-50 p-3 rounded">
+          <p className="text-sm">
+            Mouse position: <strong>X: {mousePos.x}px</strong>, <strong>Y: {mousePos.y}px</strong>
+          </p>
+          <p className="text-xs text-gray-600 mt-2">Move your mouse anywhere on the page to track its position</p>
+        </div>
+      </div>
+
+      {/* Exercise 4: localStorage Sync */}
+      <div className="border rounded-lg p-4">
+        <h3 className="font-semibold mb-3">🎯 Exercise 4: localStorage Sync</h3>
+        <div className="flex items-center gap-3 mb-3">
+          <button
+            onClick={() => setSavedCount(savedCount - 1)}
+            className="px-3 py-1 bg-purple-500 text-white rounded hover:bg-purple-600 text-sm"
+          >
+            -1
+          </button>
+          <span className="text-lg font-bold">{savedCount}</span>
+          <button
+            onClick={() => setSavedCount(savedCount + 1)}
+            className="px-3 py-1 bg-purple-500 text-white rounded hover:bg-purple-600 text-sm"
+          >
+            +1
+          </button>
+          <button
+            onClick={() => {
+              setSavedCount(0);
+              localStorage.removeItem(STORAGE_KEY);
+            }}
+            className="px-3 py-1 bg-gray-500 text-white rounded hover:bg-gray-600 text-sm ml-2"
+          >
+            Reset
+          </button>
+        </div>
+        <div className="bg-pink-50 p-3 rounded">
+          <p className="text-xs text-gray-600">
+            This count is persisted in localStorage. Refresh the page — the value will be restored!
+          </p>
+          <code className="text-xs block mt-2 bg-white p-2 rounded">
+            useEffect(() =&gt; &#123; localStorage.setItem('count', count) &#125;, [count])
+          </code>
+        </div>
+      </div>
+
       {/* Important Rules */}
       <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4">
         <h3 className="font-bold mb-2">⚠️ Important Rules</h3>
@@ -284,15 +437,12 @@ export function UseEffectDemo() {
         </ul>
       </div>
 
-      {/* Exercise */}
-      <div className="bg-blue-50 border-l-4 border-blue-400 p-4">
-        <h3 className="font-bold mb-2">🎯 Exercise for You</h3>
-        <ol className="list-decimal list-inside space-y-1 text-sm">
-          <li>Create a document title updater that shows the current count in browser tab</li>
-          <li>Build a "time since page load" counter</li>
-          <li>Add a mouse position tracker using mousemove event</li>
-          <li>Create a localStorage sync effect that saves/loads data</li>
-        </ol>
+      {/* Exercise completed */}
+      <div className="bg-green-50 border-l-4 border-green-400 p-4">
+        <h3 className="font-bold mb-2">🎉 All Exercises Completed!</h3>
+        <p className="text-sm">
+          Both tasks are now implemented as interactive demos above.
+        </p>
       </div>
     </div>
   );
