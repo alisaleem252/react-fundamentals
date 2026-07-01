@@ -437,12 +437,15 @@ export function UseEffectDemo() {
         </ul>
       </div>
 
-      {/* Exercise completed */}
-      <div className="bg-green-50 border-l-4 border-green-400 p-4">
-        <h3 className="font-bold mb-2">🎉 All Exercises Completed!</h3>
-        <p className="text-sm">
-          Both tasks are now implemented as interactive demos above.
-        </p>
+      {/* Exercise */}
+      <div className="bg-blue-50 border-l-4 border-blue-400 p-4">
+        <h3 className="font-bold mb-2">🎯 Exercise for You</h3>
+        <ol className="list-decimal list-inside space-y-1 text-sm">
+          <li>Create a document title updater that shows the current count in browser tab</li>
+          <li>Build a "time since page load" counter</li>
+          <li>Add a mouse position tracker using mousemove event</li>
+          <li>Create a localStorage sync effect that saves/loads data</li>
+        </ol>
       </div>
     </div>
   );
