@@ -38,6 +38,19 @@ export function UseEffectDemo() {
   // Demo 5: Window resize listener
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
+  // ========== State for Exercises ==========
+  // Exercise 2: Time since page load (starts at 0, counts up every second)
+  const [pageLoadSeconds, setPageLoadSeconds] = useState(0);
+
+  // Exercise 3: Mouse position on screen (x, y coordinates)
+  const [mouseX, setMouseX] = useState(0);
+  const [mouseY, setMouseY] = useState(0);
+
+  // Exercise 4: Name saved in localStorage (load saved value on startup)
+  const [savedName, setSavedName] = useState(() => {
+    return localStorage.getItem('savedName') || '';
+  });
+
   /**
    * EFFECT 1: Runs ONCE when component mounts
    * Empty dependency array [] means "run only on mount"
@@ -140,6 +153,49 @@ export function UseEffectDemo() {
       window.removeEventListener('resize', handleResize);
     };
   }, []); // Empty array = add listener once
+
+  // ============================================================
+  // EXERCISE 1: Document Title Updater
+  // Updates the browser tab title whenever 'count' changes
+  // ============================================================
+  useEffect(() => {
+    document.title = `Count: ${count}`; // Change the tab title
+  }, [count]); // Re-run whenever 'count' changes
+
+  // ============================================================
+  // EXERCISE 2: Time Since Page Load
+  // Counts seconds from when component first renders
+  // ============================================================
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setPageLoadSeconds(prev => prev + 1); // Add 1 every second
+    }, 1000);
+
+    return () => clearInterval(interval); // Stop timer on unmount
+  }, []); // Empty array = start once on mount
+
+  // ============================================================
+  // EXERCISE 3: Mouse Position Tracker
+  // Tracks cursor position anywhere on the page
+  // ============================================================
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      setMouseX(e.clientX); // Get horizontal position
+      setMouseY(e.clientY); // Get vertical position
+    };
+
+    window.addEventListener('mousemove', handleMouseMove); // Listen to mouse moves
+    return () => window.removeEventListener('mousemove', handleMouseMove); // Cleanup
+  }, []); // Empty array = run once on mount
+
+  // ============================================================
+  // EXERCISE 4: localStorage Sync
+  // Saves 'savedName' to browser storage whenever it changes
+  // ============================================================
+  useEffect(() => {
+    localStorage.setItem('savedName', savedName); // Save to browser storage
+    console.log('Saved to localStorage:', savedName);
+  }, [savedName]); // Re-run whenever 'savedName' changes
 
   return (
     <div className="space-y-6">
@@ -270,6 +326,74 @@ export function UseEffectDemo() {
             &#125;, [])
           </code>
         </div>
+      </div>
+
+      {/* 🎯 EXERCISE 1: Document Title Updater */}
+      <div className="border rounded-lg p-4">
+        <h3 className="font-semibold mb-3">🎯 Exercise 1: Document Title Updater</h3>
+        <p className="text-sm text-gray-600 mb-2">Press buttons — watch the browser tab title change!</p>
+        <div className="flex gap-2 items-center mb-2">
+          <button onClick={() => setCount(c => c - 1)} className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600">-1</button>
+          <span className="font-bold text-lg min-w-[40px] text-center">{count}</span>
+          <button onClick={() => setCount(c => c + 1)} className="px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600">+1</button>
+        </div>
+        <p className="text-sm">📌 Browser tab says: <strong>Count: {count}</strong></p>
+        <pre className="text-xs bg-gray-100 p-2 rounded mt-2 overflow-x-auto">{`useEffect(() => {
+  document.title = \`Count: \${count}\`;  // Updates tab title
+}, [count]);                              // Runs when count changes`}</pre>
+      </div>
+
+      {/* 🎯 EXERCISE 2: Time Since Page Load */}
+      <div className="border rounded-lg p-4">
+        <h3 className="font-semibold mb-3">🎯 Exercise 2: Time Since Page Load</h3>
+        <p className="text-sm text-gray-600 mb-2">Counts seconds since you opened this page. Auto-starts!</p>
+        <p className="text-2xl font-bold text-teal-600">⏱️ {pageLoadSeconds}s</p>
+        <pre className="text-xs bg-gray-100 p-2 rounded mt-2 overflow-x-auto">{`useEffect(() => {
+  const interval = setInterval(() => {
+    setPageLoadSeconds(prev => prev + 1); // +1 every second
+  }, 1000);
+  return () => clearInterval(interval);     // Stop on unmount
+}, []);                                     // Run once on mount`}</pre>
+      </div>
+
+      {/* 🎯 EXERCISE 3: Mouse Position Tracker */}
+      <div className="border rounded-lg p-4">
+        <h3 className="font-semibold mb-3">🎯 Exercise 3: Mouse Position Tracker</h3>
+        <p className="text-sm text-gray-600 mb-2">Move your mouse anywhere on the page!</p>
+        <div className="bg-pink-50 p-3 rounded">
+          <p className="text-sm">🖱️ X: <strong>{mouseX}</strong> &nbsp; Y: <strong>{mouseY}</strong></p>
+        </div>
+        <pre className="text-xs bg-gray-100 p-2 rounded mt-2 overflow-x-auto">{`useEffect(() => {
+  const track = (e: MouseEvent) => {
+    setMouseX(e.clientX);  // Get mouse X position
+    setMouseY(e.clientY);  // Get mouse Y position
+  };
+  window.addEventListener('mousemove', track);   // Listen to mouse
+  return () => window.removeEventListener('mousemove', track); // Cleanup
+}, []);`}</pre>
+      </div>
+
+      {/* 🎯 EXERCISE 4: localStorage Sync */}
+      <div className="border rounded-lg p-4">
+        <h3 className="font-semibold mb-3">🎯 Exercise 4: localStorage Sync</h3>
+        <p className="text-sm text-gray-600 mb-2">Type something, then <strong>refresh the page</strong> — it stays! 🪄</p>
+        <input
+          type="text"
+          value={savedName}
+          onChange={(e) => setSavedName(e.target.value)}
+          placeholder="Type your name..."
+          className="w-full px-3 py-2 border rounded text-sm focus:outline-none focus:ring-2 focus:ring-cyan-400"
+        />
+        {savedName && <p className="text-sm mt-2">👋 Hello, {savedName}!</p>}
+        <pre className="text-xs bg-gray-100 p-2 rounded mt-2 overflow-x-auto">{`// Load from localStorage on startup
+const [savedName, setSavedName] = useState(() => {
+  return localStorage.getItem('savedName') || '';
+});
+
+// Save to localStorage when it changes
+useEffect(() => {
+  localStorage.setItem('savedName', savedName);
+}, [savedName]);`}</pre>
       </div>
 
       {/* Important Rules */}
